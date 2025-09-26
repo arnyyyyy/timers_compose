@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">timers_compose</string>
+    <string name="create_timer">Создать таймер</string>
+    <string name="timers_name">Название таймера</string>
+    <string name="back">Назад</string>
 </resources>

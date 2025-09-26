@@ -40,7 +40,6 @@ android {
 }
 
 dependencies {
-
         implementation(libs.androidx.core.ktx)
         implementation(libs.androidx.lifecycle.runtime.ktx)
         implementation(libs.androidx.activity.compose)
@@ -50,18 +49,12 @@ dependencies {
         implementation(libs.androidx.compose.ui.tooling.preview)
         implementation(libs.androidx.compose.material3)
 
-        // Navigation
         implementation("androidx.navigation:navigation-compose:2.7.7")
-
-        // ViewModel
         implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
         implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
-
-        // Сохранение состояния
         implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0")
-
-        // Иконки
         implementation("androidx.compose.material:material-icons-extended:1.6.3")
+        implementation(libs.androidx.compose.foundation)
 
         testImplementation(libs.junit)
         androidTestImplementation(libs.androidx.junit)

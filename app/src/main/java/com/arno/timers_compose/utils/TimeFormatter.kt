@@ -1,29 +1,13 @@
 package com.arno.timers_compose.utils
 
-/**
- * Утилитарный класс для форматирования времени
- */
+import java.util.Locale
+
 object TimeFormatter {
-    /**
-     * Форматирует миллисекунды в строку вида "HH:MM:SS"
-     */
-    fun formatMillisToTime(millis: Long): String {
-        val seconds = (millis / 1000) % 60
-        val minutes = (millis / (1000 * 60)) % 60
-        val hours = millis / (1000 * 60 * 60)
-
-        return buildString {
-            if (hours > 0) {
-                append(String.format("%02d:", hours))
-            }
-            append(String.format("%02d:%02d", minutes, seconds))
+        fun formatMillis(millis: Long): String {
+                val totalSeconds = millis / 1000
+                val hours = totalSeconds / 3600
+                val minutes = if (hours > 0) (totalSeconds % 3600) / 60 else totalSeconds / 60
+                val seconds = totalSeconds % 60
+                return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds)
         }
-    }
-
-    /**
-     * Конвертирует часы, минуты и секунды в миллисекунды
-     */
-    fun timeToMillis(hours: Int, minutes: Int, seconds: Int): Long {
-        return (hours * 60 * 60 * 1000 + minutes * 60 * 1000 + seconds * 1000).toLong()
-    }
 }

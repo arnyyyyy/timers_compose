@@ -1,7 +1,8 @@
-package com.arno.timers_compose.feature_show_timer
+package com.arno.timers_compose.feature_timers_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.arno.timers_compose.feature_create_timer.CreateTimerData
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,18 +15,41 @@ class TimerViewModel : ViewModel() {
 
         private val timerJobs = mutableMapOf<String, Job>()
 
-        fun addTimer(name: String, millis: Long) {
-                val id = System.currentTimeMillis().toString()
-                val newTimer = Timer(
-                        id = id,
-                        name = name,
-                        initialDurationMillis = millis,
-                        remainingTimeMillis = millis,
-                        isRunning = false,
-                        isPaused = true,
-                        lastStartedTime = 0L
-                )
-                _timers.value = _timers.value + newTimer
+        fun addTimer(timerData: CreateTimerData) {
+                try {
+                        val name = timerData.name.ifBlank { "Мой таймер" }
+                        val hours = timerData.hours.coerceAtLeast(0)
+                        val minutes =
+                                if (hours <= 0 && timerData.minutes <= 0) 1 else timerData.minutes.coerceAtLeast(
+                                        0
+                                )
+
+                        val hoursInMillis = hours * 60L * 60L * 1000L
+                        val minutesInMillis = minutes * 60L * 1000L
+                        val durationMillis = hoursInMillis + minutesInMillis
+
+                        val id = System.currentTimeMillis().toString()
+                        val newTimer = Timer(
+                                id = id,
+                                name = name,
+                                initialDurationMillis = durationMillis,
+                                remainingTimeMillis = durationMillis,
+                                hours = hours,
+                                minutes = minutes,
+                                isRunning = false,
+                                isPaused = true,
+                                lastStartedTime = 0L
+                        )
+
+                        _timers.value = _timers.value + newTimer
+
+                        android.util.Log.d(
+                                TAG,
+                                "Таймер успешно создан: $name, hours=$hours, minutes=$minutes, durationMillis=$durationMillis"
+                        )
+                } catch (e: Exception) {
+                        android.util.Log.e(TAG, "Ошибка при создании таймера: ${e.message}")
+                }
         }
 
         fun toggleTimer(id: String) {
@@ -106,5 +130,9 @@ class TimerViewModel : ViewModel() {
                 _timers.value = _timers.value.filter { it.id != id }
                 timerJobs[id]?.cancel()
                 timerJobs.remove(id)
+        }
+
+        private companion object {
+                const val TAG = "TimerViewModel"
         }
 }
