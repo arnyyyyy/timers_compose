@@ -6,8 +6,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.arno.timers_compose.feature_create_timer.CreateTimerData
-import com.arno.timers_compose.feature_timers_list.Timer
 import com.arno.timers_compose.feature_create_timer.CreateTimerScreen
 import com.arno.timers_compose.feature_timers_list.TimersListScreen
 
@@ -19,9 +17,6 @@ object NavRoutes {
 @Composable
 fun TimerNavHost(
         navController: NavHostController = rememberNavController(),
-        timers: List<Timer>,
-        onTimerClick: (String) -> Unit,
-        onAddTimer: (CreateTimerData) -> Unit
 ) {
         val actions = remember(navController) {
                 TimerNavigationActions(navController)
@@ -33,27 +28,18 @@ fun TimerNavHost(
         ) {
                 composable(NavRoutes.TIMERS_LIST) {
                         TimersListScreen(
-                                timers = timers,
-                                onTimerClick = onTimerClick,
-                                onAddClick = actions.navigateToCreateTimer
+                                navigateToCreateTimerScreen = actions.navigateToCreateTimer
                         )
                 }
 
                 composable(NavRoutes.CREATE_TIMER) {
                         CreateTimerScreen(
-                                onCreateTimer = { timerData ->
-                                        onAddTimer(timerData)
-                                        actions.navigateBack()
-                                },
                                 onNavigateBack = actions.navigateBack
                         )
                 }
         }
 }
 
-/**
- * Действия навигации
- */
 class TimerNavigationActions(private val navController: NavHostController) {
         val navigateToCreateTimer: () -> Unit = {
                 try {

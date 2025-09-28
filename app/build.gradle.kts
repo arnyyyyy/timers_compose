@@ -2,6 +2,7 @@ plugins {
         alias(libs.plugins.android.application)
         alias(libs.plugins.kotlin.android)
         alias(libs.plugins.kotlin.compose)
+        id("kotlin-kapt")
 }
 
 android {
@@ -55,6 +56,9 @@ dependencies {
         implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.7.0")
         implementation("androidx.compose.material:material-icons-extended:1.6.3")
         implementation(libs.androidx.compose.foundation)
+        implementation(libs.androidx.room.common.jvm)
+        implementation(libs.androidx.room.ktx)
+        kapt(libs.androidx.room.compiler)
 
         testImplementation(libs.junit)
         androidTestImplementation(libs.androidx.junit)

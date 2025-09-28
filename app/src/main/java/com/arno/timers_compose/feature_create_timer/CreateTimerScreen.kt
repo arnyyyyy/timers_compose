@@ -23,12 +23,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.arno.timers_compose.R
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.arno.timers_compose.core.AppViewModelProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTimerScreen(
-        onCreateTimer: (timerData: CreateTimerData) -> Unit,
-        onNavigateBack: () -> Unit
+        onNavigateBack: () -> Unit,
+        viewModel: CreateTimerViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
         var timerData by remember { mutableStateOf(CreateTimerData()) }
 
@@ -55,7 +57,7 @@ fun CreateTimerScreen(
                                 actions = {
                                         IconButton(
                                                 onClick = {
-                                                        onCreateTimer(timerData)
+                                                        viewModel.addTimer(timerData)
                                                         onNavigateBack()
                                                 }
                                         ) {
@@ -161,5 +163,5 @@ fun CreateTimerScreen(
 @Preview(showBackground = true)
 @Composable
 fun CreateTimerScreenPreview() {
-        CreateTimerScreen(onCreateTimer = { _ -> }, onNavigateBack = {})
+        CreateTimerScreen(onNavigateBack = {})
 }
