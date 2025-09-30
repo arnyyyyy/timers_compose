@@ -9,6 +9,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -57,6 +58,13 @@ class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
         }
 
 
+        // TODO: создать поле для отображения -- оттуда вычитать красиво пока таймер активен, но
+        // поле другое в remain не обновляем
+        // обновляем remain только когда пауза или когда вышли из приложения
+        // с активным таймером и вернулись
+        // даже не обновлять в репе каждый раз а только в UI
+        // а в репе только когда пауза или выход из приложения
+        
         private fun startTicker() {
                 if (tickerJob?.isActive == true) return
                 tickerJob = viewModelScope.launch(Dispatchers.Default) {
@@ -81,16 +89,21 @@ class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
         fun refreshTimers() {
                 Log.d(TAG, "refreshTimers called")
                 viewModelScope.launch {
-                        delay(1000)
+                        val timersList = timersRepository.getAllTimers().firstOrNull()
+                        if (timersList.isNullOrEmpty()) {
+                                Log.d(TAG, "No timers available yet")
+                                return@launch
+                        }
 
-                        val currentTimers = timers.value
-                        Log.d(TAG, "Processing ${currentTimers.size} timers")
+                        Log.d(TAG, "Processing ${timersList.size} timers")
 
-                        val runningTimers = currentTimers.filter { it.isRunning }
+                        val runningTimers = timersList.filter { it.isRunning }
                         Log.d(TAG, "Found ${runningTimers.size} running timers to refresh")
 
                         runningTimers.forEach { timer ->
+                                Log.d(TAG, "Refreshing timer: ${timer.id} with ${timer.remainingTimeMillis} ms remaining")
                                 val elapsed = System.currentTimeMillis() - timer.lastStartedTime
+                                Log.d(TAG, "Elapsed time since last start: $elapsed ms")
                                 val newRemaining =
                                         (timer.remainingTimeMillis - elapsed).coerceAtLeast(0)
                                 val updated = timer.copy(
