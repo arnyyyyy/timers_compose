@@ -145,6 +145,7 @@ fun CreateTimerScreen(
                                                         setOnTimeChangedListener { _, hour, minute ->
                                                                 timerData.minutes = minute
                                                                 timerData.hours = hour
+                                                                performHapticFeedback(1)
                                                         }
                                                         scaleX = 1.3f
                                                         scaleY = 1.3f

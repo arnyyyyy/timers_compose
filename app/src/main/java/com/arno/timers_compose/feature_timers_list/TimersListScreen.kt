@@ -65,10 +65,11 @@ fun TimersListScreen(
                 containerColor = Color.Transparent,
                 floatingActionButton = {
                         FloatingActionButton(
+                                shape = CircleShape,
                                 onClick = navigateToCreateTimerScreen,
                                 containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
                                 contentColor = Color.White,
-                                shape = CircleShape
+                                elevation = FloatingActionButtonDefaults.elevation(0.dp)
                         ) {
                                 Icon(
                                         Icons.Default.Add,
@@ -135,7 +136,7 @@ fun TimersListScreen(
                                         LazyColumn(
                                                 contentPadding = PaddingValues(
                                                         horizontal = 16.dp,
-                                                        vertical = 8.dp
+                                                        vertical = 16.dp
                                                 ),
                                                 verticalArrangement = Arrangement.spacedBy(16.dp)
                                         ) {
