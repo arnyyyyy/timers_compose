@@ -59,6 +59,7 @@ dependencies {
         implementation(libs.androidx.room.common.jvm)
         implementation(libs.androidx.room.ktx)
         kapt(libs.androidx.room.compiler)
+        implementation("com.google.code.gson:gson:2.10.1")
 
         testImplementation(libs.junit)
         androidTestImplementation(libs.androidx.junit)

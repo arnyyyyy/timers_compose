@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import com.arno.timers_compose.feature_store_timers.TimerEntity
 
 @Composable
 fun TimersListScreen(
@@ -158,7 +159,7 @@ fun TimersListScreen(
 }
 
 @Composable
-fun TimerItem(timer: Timer, onClick: () -> Unit) {
+fun TimerItem(timer: TimerEntity, onClick: () -> Unit) {
         Card(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(

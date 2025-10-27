@@ -3,6 +3,7 @@ package com.arno.timers_compose.feature_timers_list
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.arno.timers_compose.feature_store_timers.TimerEntity
 import com.arno.timers_compose.feature_store_timers.TimerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -12,9 +13,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlin.collections.filter
+import kotlin.collections.find
 
 class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
-        val timers: StateFlow<List<Timer>> =
+        val timers: StateFlow<List<TimerEntity>> =
                 timersRepository.getAllTimers().stateIn(
                         scope = viewModelScope,
                         started = SharingStarted.WhileSubscribed(5_000L),
@@ -32,7 +35,7 @@ class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
                 }
         }
 
-        private fun startTimer(timer: Timer) {
+        private fun startTimer(timer: TimerEntity) {
                 val updatedTimer = timer.copy(
                         isRunning = true,
                         isPaused = false,
@@ -44,7 +47,7 @@ class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
                 }
         }
 
-        private fun pauseTimer(timer: Timer) {
+        private fun pauseTimer(timer: TimerEntity) {
                 val updatedTimer = timer.copy(isRunning = false, isPaused = true)
                 viewModelScope.launch {
                         timersRepository.updateTimer(updatedTimer)

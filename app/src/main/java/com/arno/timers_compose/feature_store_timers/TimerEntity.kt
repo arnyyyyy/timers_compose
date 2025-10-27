@@ -2,6 +2,7 @@ package com.arno.timers_compose.feature_store_timers
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.arno.timers_compose.feature_create_timer.TimerType
 
 @Entity(tableName = "timers")
 data class TimerEntity(
@@ -11,6 +12,8 @@ data class TimerEntity(
         val remainingTimeMillis: Long,
         val hours: Int,
         val minutes: Int,
+        val timerType: TimerType,
+        val selectedDays: List<String> = emptyList(),
         val isRunning: Boolean,
         val isPaused: Boolean,
         val lastStartedTime: Long
