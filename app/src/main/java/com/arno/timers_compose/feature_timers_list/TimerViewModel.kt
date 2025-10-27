@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arno.timers_compose.feature_store_timers.TimerEntity
 import com.arno.timers_compose.feature_store_timers.TimerRepository
+import com.arno.timers_compose.utils.DayUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -27,19 +28,26 @@ class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
                         timersRepository.getAllTimers(),
                         _displayTimeTick
                 ) { timersFromDb, _ ->
-                        timersFromDb.map { timer ->
-                                if (timer.isRunning) {
-                                        val elapsed =
-                                                System.currentTimeMillis() - timer.lastStartedTime
-                                        val displayTime =
-                                                (timer.remainingTimeMillis - elapsed).coerceAtLeast(
-                                                        0
-                                                )
-                                        timer.copy(remainingTimeMillis = displayTime)
-                                } else {
-                                        timer
+                        timersFromDb
+                                .filter { timer ->
+                                        DayUtils.shouldShowTimerToday(
+                                                timer.timerType,
+                                                timer.selectedDays
+                                        )
                                 }
-                        }
+                                .map { timer ->
+                                        if (timer.isRunning) {
+                                                val elapsed =
+                                                        System.currentTimeMillis() - timer.lastStartedTime
+                                                val displayTime =
+                                                        (timer.remainingTimeMillis - elapsed).coerceAtLeast(
+                                                                0
+                                                        )
+                                                timer.copy(remainingTimeMillis = displayTime)
+                                        } else {
+                                                timer
+                                        }
+                                }
                 }.stateIn(
                         scope = viewModelScope,
                         started = SharingStarted.WhileSubscribed(5_000L),
