@@ -1,4 +1,4 @@
-package com.arno.timers_compose.feature_create_timer
+package com.arno.timers_compose.feature_create_timer.view
 
 import android.view.LayoutInflater
 import androidx.compose.foundation.background
@@ -25,6 +25,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.arno.timers_compose.R
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arno.timers_compose.core.AppViewModelProvider
+import com.arno.timers_compose.feature_create_timer.CreateTimerData
+import com.arno.timers_compose.feature_create_timer.CreateTimerViewModel
+import com.arno.timers_compose.feature_create_timer.TimerType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,7 +95,7 @@ fun CreateTimerScreen(
                         {
                                 BasicTextField(
                                         value = timerData.name,
-                                        onValueChange = { timerData.name = it },
+                                        onValueChange = { timerData = timerData.copy(name = it) },
                                         singleLine = true,
                                         modifier = Modifier
                                                 .size(width = 220.dp, height = 60.dp)
@@ -143,8 +146,10 @@ fun CreateTimerScreen(
                                                 timePicker.apply {
                                                         setIs24HourView(true)
                                                         setOnTimeChangedListener { _, hour, minute ->
-                                                                timerData.minutes = minute
-                                                                timerData.hours = hour
+                                                                timerData = timerData.copy(
+                                                                        minutes = minute,
+                                                                        hours = hour
+                                                                )
                                                                 performHapticFeedback(1)
                                                         }
                                                         scaleX = 1.3f
@@ -155,7 +160,27 @@ fun CreateTimerScreen(
                                                 .padding(bottom = 24.dp)
                                                 .size(250.dp, 250.dp)
                                 )
-                                Spacer(modifier = Modifier.height(16.dp))
+
+                                CreateTimerTypeSelector(
+                                        selectedType = timerData.timerType,
+                                        onTypeSelected = { type ->
+                                                timerData = timerData.copy(timerType = type)
+                                        }
+                                )
+
+                                if (timerData.timerType == TimerType.DAILY) {
+                                        CreateTimerWeekDaysSelector(
+                                                selectedDays = timerData.selectedDays,
+                                                onDaysChanged = { newDays ->
+                                                        timerData =
+                                                                timerData.copy(selectedDays = newDays)
+                                                }
+                                        )
+                                } else {
+                                        Box(
+                                                modifier = Modifier.size(44.dp),
+                                        )
+                                }
                         }
                 }
         }

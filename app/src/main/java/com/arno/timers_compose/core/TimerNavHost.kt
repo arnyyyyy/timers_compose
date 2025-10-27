@@ -6,7 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.arno.timers_compose.feature_create_timer.CreateTimerScreen
+import com.arno.timers_compose.feature_create_timer.view.CreateTimerScreen
 import com.arno.timers_compose.feature_timers_list.TimersListScreen
 
 object NavRoutes {
