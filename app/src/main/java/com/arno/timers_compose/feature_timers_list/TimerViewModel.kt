@@ -8,8 +8,10 @@ import com.arno.timers_compose.feature_store_timers.TimerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -17,8 +19,28 @@ import kotlin.collections.filter
 import kotlin.collections.find
 
 class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
+
+        private val _displayTimeTick = MutableStateFlow(0L)
+
         val timers: StateFlow<List<TimerEntity>> =
-                timersRepository.getAllTimers().stateIn(
+                combine(
+                        timersRepository.getAllTimers(),
+                        _displayTimeTick
+                ) { timersFromDb, _ ->
+                        timersFromDb.map { timer ->
+                                if (timer.isRunning) {
+                                        val elapsed =
+                                                System.currentTimeMillis() - timer.lastStartedTime
+                                        val displayTime =
+                                                (timer.remainingTimeMillis - elapsed).coerceAtLeast(
+                                                        0
+                                                )
+                                        timer.copy(remainingTimeMillis = displayTime)
+                                } else {
+                                        timer
+                                }
+                        }
+                }.stateIn(
                         scope = viewModelScope,
                         started = SharingStarted.WhileSubscribed(5_000L),
                         initialValue = emptyList()
@@ -48,7 +70,14 @@ class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
         }
 
         private fun pauseTimer(timer: TimerEntity) {
-                val updatedTimer = timer.copy(isRunning = false, isPaused = true)
+                val elapsed = System.currentTimeMillis() - timer.lastStartedTime
+                val newRemaining = (timer.remainingTimeMillis - elapsed).coerceAtLeast(0)
+
+                val updatedTimer = timer.copy(
+                        isRunning = false,
+                        isPaused = true,
+                        remainingTimeMillis = newRemaining
+                )
                 viewModelScope.launch {
                         timersRepository.updateTimer(updatedTimer)
                 }
@@ -60,31 +89,44 @@ class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
                 }
         }
 
-
-        // TODO: создать поле для отображения -- оттуда вычитать красиво пока таймер активен, но
-        // поле другое в remain не обновляем
-        // обновляем remain только когда пауза или когда вышли из приложения
-        // с активным таймером и вернулись
-        // даже не обновлять в репе каждый раз а только в UI
-        // а в репе только когда пауза или выход из приложения
-        
         private fun startTicker() {
                 if (tickerJob?.isActive == true) return
                 tickerJob = viewModelScope.launch(Dispatchers.Default) {
                         while (true) {
                                 delay(1000L)
-                                val runningTimers =
-                                        timers.value.filter { it.isRunning && it.remainingTimeMillis > 0 }
-                                if (runningTimers.isEmpty()) {
+
+                                val hasRunningTimers = timers.value.any { timer ->
+                                        if (!timer.isRunning) return@any false
+                                        val elapsed =
+                                                System.currentTimeMillis() - timer.lastStartedTime
+                                        val remaining = timer.remainingTimeMillis - elapsed
+                                        remaining > 0
+                                }
+
+                                if (!hasRunningTimers) {
+                                        stopFinishedTimers()
                                         break
                                 }
-                                runningTimers.forEach { timer ->
-                                        val newRemaining = timer.remainingTimeMillis - 1000L
-                                        val updated = timer.copy(
-                                                remainingTimeMillis = newRemaining.coerceAtLeast(0)
-                                        )
-                                        timersRepository.updateTimer(updated)
-                                }
+
+                                _displayTimeTick.value = System.currentTimeMillis()
+                        }
+                }
+        }
+
+        private suspend fun stopFinishedTimers() {
+                val currentTimers = timersRepository.getAllTimers().firstOrNull() ?: return
+
+                currentTimers.filter { it.isRunning }.forEach { timer ->
+                        val elapsed = System.currentTimeMillis() - timer.lastStartedTime
+                        val remaining = (timer.remainingTimeMillis - elapsed).coerceAtLeast(0)
+
+                        if (remaining <= 0) {
+                                val stoppedTimer = timer.copy(
+                                        isRunning = false,
+                                        isPaused = true,
+                                        remainingTimeMillis = 0
+                                )
+                                timersRepository.updateTimer(stoppedTimer)
                         }
                 }
         }
@@ -104,7 +146,10 @@ class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
                         Log.d(TAG, "Found ${runningTimers.size} running timers to refresh")
 
                         runningTimers.forEach { timer ->
-                                Log.d(TAG, "Refreshing timer: ${timer.id} with ${timer.remainingTimeMillis} ms remaining")
+                                Log.d(
+                                        TAG,
+                                        "Refreshing timer: ${timer.id} with ${timer.remainingTimeMillis} ms remaining"
+                                )
                                 val elapsed = System.currentTimeMillis() - timer.lastStartedTime
                                 Log.d(TAG, "Elapsed time since last start: $elapsed ms")
                                 val newRemaining =

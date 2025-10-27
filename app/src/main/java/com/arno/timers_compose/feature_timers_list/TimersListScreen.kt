@@ -30,10 +30,6 @@ import com.arno.timers_compose.R
 import com.arno.timers_compose.core.AppViewModelProvider
 import com.arno.timers_compose.utils.TimeFormatter.formatMillis
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import com.arno.timers_compose.feature_store_timers.TimerEntity
 
 @Composable
@@ -45,14 +41,9 @@ fun TimersListScreen(
         val timersState = viewModel.timers.collectAsState()
         val timers = timersState.value
 
-        var hasScreenBeenShownBefore by rememberSaveable { mutableStateOf(false) }
-
         LaunchedEffect(Unit) {
-                if (!hasScreenBeenShownBefore) {
-                        Log.d("TimersListScreen", "First time on screen - calling refreshTimers")
-                        viewModel.refreshTimers()
-                        hasScreenBeenShownBefore = true
-                }
+                Log.d("TimersListScreen", "First time on screen - calling refreshTimers")
+                viewModel.refreshTimers()
         }
 
         val gradientBrush = Brush.verticalGradient(
