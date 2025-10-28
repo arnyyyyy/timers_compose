@@ -1,8 +1,18 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
         alias(libs.plugins.android.application)
         alias(libs.plugins.kotlin.android)
         alias(libs.plugins.kotlin.compose)
+        id("com.google.gms.google-services")
         id("kotlin-kapt")
+}
+
+val secretsPropertiesFile = rootProject.file("secrets.properties")
+val secretsProperties = Properties()
+if (secretsPropertiesFile.exists()) {
+        FileInputStream(secretsPropertiesFile).use { secretsProperties.load(it) }
 }
 
 android {
@@ -17,6 +27,21 @@ android {
                 versionName = "1.0"
 
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+                buildConfigField(
+                        "String",
+                        "GOOGLE_WEB_CLIENT_ID",
+                        "\"${secretsProperties.getProperty("GOOGLE_WEB_CLIENT_ID", "")}\""
+                )
+        }
+
+        signingConfigs {
+                create("release") {
+                        storeFile = file("release-keystore.jks")
+                        storePassword = secretsProperties.getProperty("KEYSTORE_PASSWORD")
+                        keyAlias = secretsProperties.getProperty("KEY_ALIAS")
+                        keyPassword = secretsProperties.getProperty("KEY_PASSWORD")
+                }
         }
 
         buildTypes {
@@ -26,6 +51,7 @@ android {
                                 getDefaultProguardFile("proguard-android-optimize.txt"),
                                 "proguard-rules.pro"
                         )
+                        signingConfig = signingConfigs.getByName("release")
                 }
         }
         compileOptions {
@@ -37,6 +63,7 @@ android {
         }
         buildFeatures {
                 compose = true
+                buildConfig = true
         }
 }
 
@@ -60,6 +87,17 @@ dependencies {
         implementation(libs.androidx.room.ktx)
         kapt(libs.androidx.room.compiler)
         implementation("com.google.code.gson:gson:2.10.1")
+
+        implementation("io.coil-kt:coil-compose:2.5.0")
+
+        implementation("com.google.android.gms:play-services-auth:20.7.0")
+
+        implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+        implementation("com.google.firebase:firebase-database-ktx")
+        implementation("com.google.firebase:firebase-storage-ktx")
+        implementation("com.google.firebase:firebase-auth-ktx")
+        implementation("com.firebaseui:firebase-ui-auth:8.0.2")
+        implementation("com.firebaseui:firebase-ui-database:8.0.2")
 
         testImplementation(libs.junit)
         androidTestImplementation(libs.androidx.junit)

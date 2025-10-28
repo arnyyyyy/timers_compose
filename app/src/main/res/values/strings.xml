@@ -7,4 +7,7 @@
     <string name="start">Старт</string>
     <string name="add_timer">Добавить таймер</string>
     <string name="my_timer">Мой таймер</string>
+    <string name="hello">Здравствуйте!</string>
+    <string name="register"> Войдите, чтобы продолжить</string>
+    <string name="google_sign_in">Войти через Google</string>
 </resources>
