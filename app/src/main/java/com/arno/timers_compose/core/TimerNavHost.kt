@@ -10,7 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.arno.timers_compose.feature_auth.AuthScreen
 import com.arno.timers_compose.feature_crud.view.CreateTimerScreen
-import com.arno.timers_compose.feature_crud.EditTimerScreen
+import com.arno.timers_compose.feature_crud.view.EditTimerScreen
 import com.arno.timers_compose.feature_timer_detail.TimerDetailScreen
 import com.arno.timers_compose.feature_timers_list.TimersListScreen
 import com.google.firebase.auth.FirebaseAuth

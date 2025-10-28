@@ -56,11 +56,8 @@ fun TimerItem(
 
         Card(
                 shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
-                ),
                 elevation = CardDefaults.cardElevation(
-                        defaultElevation = if (timer.isRunning) 2.dp else 0.dp
+                        defaultElevation = 2.dp
                 ),
                 modifier = Modifier
                         .fillMaxWidth()

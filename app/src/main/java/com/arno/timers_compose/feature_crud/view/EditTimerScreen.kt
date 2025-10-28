@@ -6,29 +6,58 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.arno.timers_compose.R
 import com.arno.timers_compose.core.AppViewModelProvider
 import com.arno.timers_compose.feature_crud.CreateTimerData
 import com.arno.timers_compose.feature_crud.CreateTimerViewModel
+import com.arno.timers_compose.feature_timers_list.TimerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateTimerScreen(
+fun EditTimerScreen(
+        timerId: String,
         onNavigateBack: () -> Unit,
-        viewModel: CreateTimerViewModel = viewModel(factory = AppViewModelProvider.Factory)
+        timerViewModel: TimerViewModel = viewModel(factory = AppViewModelProvider.Factory),
+        createTimerViewModel: CreateTimerViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-        var timerData by remember { mutableStateOf(CreateTimerData()) }
+        val timersState = timerViewModel.timers.collectAsState()
+        val timer = timersState.value.find { it.id == timerId }
+
+        LaunchedEffect(Unit) {
+                timerViewModel.refreshTimers()
+        }
+
+        if (timer == null) {
+                Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                ) {
+                        CircularProgressIndicator()
+                }
+                return
+        }
+
+        var timerData by remember {
+                mutableStateOf(
+                        CreateTimerData(
+                                name = timer.name,
+                                hours = timer.hours,
+                                minutes = timer.minutes,
+                                timerType = timer.timerType,
+                                selectedDays = timer.selectedDays
+                        )
+                )
+        }
 
         Scaffold(
                 topBar = {
                         TopAppBar(
                                 title = {
                                         Text(
-                                                text = "Новый таймер",
+                                                text = "Редактирование",
                                                 style = MaterialTheme.typography.titleLarge.copy(
                                                         fontWeight = FontWeight.SemiBold
                                                 )
@@ -38,20 +67,23 @@ fun CreateTimerScreen(
                                         IconButton(onClick = onNavigateBack) {
                                                 Icon(
                                                         Icons.AutoMirrored.Filled.ArrowBack,
-                                                        contentDescription = stringResource(R.string.back)
+                                                        contentDescription = "Назад"
                                                 )
                                         }
                                 },
                                 actions = {
                                         IconButton(
                                                 onClick = {
-                                                        viewModel.addTimer(timerData)
+                                                        createTimerViewModel.updateTimer(
+                                                                timerData,
+                                                                timer
+                                                        )
                                                         onNavigateBack()
                                                 }
                                         ) {
                                                 Icon(
                                                         imageVector = Icons.Default.Check,
-                                                        contentDescription = stringResource(R.string.create_timer)
+                                                        contentDescription = "Сохранить"
                                                 )
                                         }
                                 },

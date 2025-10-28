@@ -1,6 +1,5 @@
 package com.arno.timers_compose.feature_timers_list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,20 +36,12 @@ fun TimersListScreen(
                 viewModel.refreshTimers()
         }
 
-        val gradientBrush = Brush.verticalGradient(
-                colors = listOf(
-                        Color(0xFF88CCFF).copy(alpha = 0.7f),
-                        Color(0xFFCCDDFF).copy(alpha = 0.6f)
-                )
-        )
-
         Scaffold(
-                containerColor = Color.Transparent,
                 floatingActionButton = {
                         FloatingActionButton(
                                 shape = CircleShape,
                                 onClick = navigateToCreateTimerScreen,
-                                containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                                containerColor = MaterialTheme.colorScheme.primary,
                                 contentColor = Color.White,
                                 elevation = FloatingActionButtonDefaults.elevation(0.dp)
                         ) {
@@ -60,18 +50,12 @@ fun TimersListScreen(
                                         contentDescription = stringResource(R.string.add_timer)
                                 )
                         }
-                }
+                },
+                containerColor = MaterialTheme.colorScheme.surface
         ) { innerPadding ->
                 Box(
-                        modifier = Modifier
-                                .fillMaxSize()
+                        modifier = Modifier.fillMaxSize()
                 ) {
-                        Box(
-                                modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(gradientBrush)
-                        )
-
                         Text(
                                 text = "Мои Таймеры",
                                 modifier = Modifier
@@ -96,8 +80,11 @@ fun TimersListScreen(
                                                         .align(Alignment.Center),
                                                 shape = RoundedCornerShape(16.dp),
                                                 colors = CardDefaults.cardColors(
-                                                        containerColor = Color.White.copy(alpha = 0.7f)
+                                                        containerColor = MaterialTheme.colorScheme.surface
                                                 ),
+                                                elevation = CardDefaults.cardElevation(
+                                                        defaultElevation = 1.dp
+                                                )
                                         ) {
                                                 Column(
                                                         modifier = Modifier.padding(24.dp),
