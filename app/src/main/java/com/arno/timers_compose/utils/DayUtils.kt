@@ -1,6 +1,6 @@
 package com.arno.timers_compose.utils
 
-import com.arno.timers_compose.feature_create_timer.TimerType
+import com.arno.timers_compose.feature_crud.TimerType
 import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale

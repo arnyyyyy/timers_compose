@@ -41,7 +41,11 @@ import java.util.Date
 import java.util.Locale
 
 @Composable
-fun TimerItem(timer: TimerEntity, onClick: () -> Unit) {
+fun TimerItem(
+        timer: TimerEntity,
+        onClick: () -> Unit,
+        onPlayPauseClick: () -> Unit
+) {
         val progress =
                 1f - (timer.remainingTimeMillis.toFloat() / timer.initialDurationMillis.toFloat())
         val animatedProgress by animateFloatAsState(
@@ -75,7 +79,6 @@ fun TimerItem(timer: TimerEntity, onClick: () -> Unit) {
                                         color = MaterialTheme.colorScheme.onSurface
                                 )
                         )
-
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Row(
@@ -95,10 +98,11 @@ fun TimerItem(timer: TimerEntity, onClick: () -> Unit) {
                                                 letterSpacing = (-0.5).sp
                                         )
                                 )
-
                                 Box(
                                         modifier = Modifier
                                                 .size(56.dp)
+                                                .clip(CircleShape)
+                                                .clickable { onPlayPauseClick() }
                                                 .background(
                                                         color = if (timer.isRunning) {
                                                                 MaterialTheme.colorScheme.tertiary.copy(

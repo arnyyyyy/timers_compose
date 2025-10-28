@@ -128,10 +128,12 @@ fun TimersListScreen(
                                                         TimerItem(
                                                                 timer = timer,
                                                                 onClick = {
-                                                                        viewModel.toggleTimer(timer.id)
                                                                         navigateToTimerDetailScreen(
                                                                                 timer.id
                                                                         )
+                                                                },
+                                                                onPlayPauseClick = {
+                                                                        viewModel.toggleTimer(timer.id)
                                                                 }
                                                         )
                                                 }

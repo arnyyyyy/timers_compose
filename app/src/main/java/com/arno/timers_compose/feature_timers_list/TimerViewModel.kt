@@ -83,7 +83,7 @@ class TimerViewModel(
                 }
         }
 
-        private fun pauseTimer(timer: TimerEntity) {
+        fun pauseTimer(timer: TimerEntity) {
                 val elapsed = System.currentTimeMillis() - timer.lastStartedTime
                 val newRemaining = (timer.remainingTimeMillis - elapsed).coerceAtLeast(0)
 
@@ -205,6 +205,16 @@ class TimerViewModel(
         private fun stopTicker() {
                 tickerJob?.cancel()
                 tickerJob = null
+        }
+
+        fun deleteTimer(id: String) {
+                viewModelScope.launch {
+                        timersRepository.deleteTimer(id)
+                        if (timers.value.none { it.isRunning }) {
+                                stopTicker()
+                                WorkManagerScheduler.cancelPeriodic30Min(context)
+                        }
+                }
         }
 
         companion object {

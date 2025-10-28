@@ -2,7 +2,7 @@ package com.arno.timers_compose.feature_store_timers
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.arno.timers_compose.feature_create_timer.TimerType
+import com.arno.timers_compose.feature_crud.TimerType
 
 @Entity(tableName = "timers")
 data class TimerEntity(

@@ -1,4 +1,4 @@
-package com.arno.timers_compose.feature_create_timer.view
+package com.arno.timers_compose.feature_crud.view
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.arno.timers_compose.feature_create_timer.TimerType
+import com.arno.timers_compose.feature_crud.TimerType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

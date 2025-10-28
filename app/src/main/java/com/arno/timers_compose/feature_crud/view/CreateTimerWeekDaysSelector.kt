@@ -1,4 +1,4 @@
-package com.arno.timers_compose.feature_create_timer.view
+package com.arno.timers_compose.feature_crud.view
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

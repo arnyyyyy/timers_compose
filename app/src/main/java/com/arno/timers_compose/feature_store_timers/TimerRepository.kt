@@ -3,7 +3,6 @@ package com.arno.timers_compose.feature_store_timers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-
 class TimerRepository(private val timerDao: TimerDao) {
         fun getAllTimers(): Flow<List<TimerEntity>> {
                 return timerDao.getAllTimers().map { it -> it.map { entity -> entity } }

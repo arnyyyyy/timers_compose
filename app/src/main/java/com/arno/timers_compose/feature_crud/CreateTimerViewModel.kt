@@ -1,4 +1,4 @@
-package com.arno.timers_compose.feature_create_timer
+package com.arno.timers_compose.feature_crud
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,5 +37,33 @@ class CreateTimerViewModel(
                         timersRepository.saveTimer(newTimer)
                 }
         }
-}
 
+        fun updateTimer(timerData: CreateTimerData, originalTimer: TimerEntity) {
+                val name = timerData.name
+                val hours = timerData.hours.coerceAtLeast(0)
+                val minutes =
+                        if (hours <= 0 && timerData.minutes <= 0) 1 else timerData.minutes.coerceAtLeast(
+                                0
+                        )
+                val hoursInMillis = hours * 60L * 60L * 1000L
+                val minutesInMillis = minutes * 60L * 1000L
+                val durationMillis = hoursInMillis + minutesInMillis
+
+                val updatedTimer = originalTimer.copy(
+                        name = name,
+                        initialDurationMillis = durationMillis,
+                        remainingTimeMillis = if (originalTimer.isRunning || !originalTimer.isPaused) {
+                                originalTimer.remainingTimeMillis
+                        } else {
+                                durationMillis
+                        },
+                        hours = hours,
+                        minutes = minutes,
+                        timerType = timerData.timerType,
+                        selectedDays = timerData.selectedDays
+                )
+                viewModelScope.launch {
+                        timersRepository.updateTimer(updatedTimer)
+                }
+        }
+}
