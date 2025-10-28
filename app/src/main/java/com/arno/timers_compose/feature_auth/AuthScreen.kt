@@ -1,7 +1,7 @@
 package com.arno.timers_compose.feature_auth
 
 import android.app.Activity
-import android.util.Log
+import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -20,8 +20,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arno.timers_compose.R
 
-private const val TAG = "AuthScreen"
-
 @Composable
 fun AuthScreen(
         authViewModel: AuthViewModel = viewModel(),
@@ -30,31 +28,38 @@ fun AuthScreen(
         val context = LocalContext.current
         val authState by authViewModel.authState.collectAsState()
 
+        var shouldRequestNotificationPermission by remember { mutableStateOf(false) }
+
         LaunchedEffect(Unit) {
                 authViewModel.initGoogleSignIn(context)
         }
 
+        val notificationPermissionLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+                onAuthSuccess()
+        }
+
         LaunchedEffect(authState.user) {
-                if (authState.user != null) {
-                        onAuthSuccess()
+                if (authState.user != null && !shouldRequestNotificationPermission) {
+                        shouldRequestNotificationPermission = true
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                        } else {
+                                onAuthSuccess()
+                        }
                 }
         }
 
         val launcher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.StartActivityForResult()
         ) { result ->
-                Log.d(
-                        TAG,
-                        "Результат Activity: resultCode=${result.resultCode}, data=${result.data}"
-                )
-                Log.d(TAG, "Дополнительные данные: ${result.data?.extras}")
-
-
                 if (result.data != null) {
                         authViewModel.handleSignInResult(result.data)
                 } else {
                         if (result.resultCode == Activity.RESULT_OK) {
-                                authViewModel.handleSignInResult(result.data)
+                                authViewModel.handleSignInResult(null)
                         }
                 }
         }

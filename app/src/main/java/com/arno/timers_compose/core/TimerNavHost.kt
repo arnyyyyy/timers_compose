@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.arno.timers_compose.feature_auth.AuthScreen
 import com.arno.timers_compose.feature_create_timer.view.CreateTimerScreen
 import com.arno.timers_compose.feature_timers_list.TimersListScreen
+import com.google.firebase.auth.FirebaseAuth
 import android.util.Log
 
 object NavRoutes {
@@ -25,9 +26,15 @@ fun TimerNavHost(
                 TimerNavigationActions(navController)
         }
 
+        val startDestination = if (FirebaseAuth.getInstance().currentUser != null) {
+                NavRoutes.TIMERS_LIST
+        } else {
+                NavRoutes.AUTH
+        }
+
         NavHost(
                 navController = navController,
-                startDestination = NavRoutes.AUTH
+                startDestination = startDestination
         ) {
                 composable(NavRoutes.AUTH) {
                         AuthScreen(
@@ -52,30 +59,24 @@ fun TimerNavHost(
 class TimerNavigationActions(private val navController: NavHostController) {
         val navigateToTimersList: () -> Unit = {
                 try {
-                        Log.d(TAG, "Переход на экран списка таймеров")
                         navController.navigate(NavRoutes.TIMERS_LIST) {
                                 popUpTo(NavRoutes.AUTH) { inclusive = true }
                         }
                 } catch (e: Exception) {
-                        Log.e(TAG, "Ошибка при навигации к списку: ${e.message}")
+                        Log.e(TAG, e.message ?: "")
                 }
         }
 
         val navigateToCreateTimer: () -> Unit = {
                 try {
-                        Log.d(TAG, "Переход на экран создания таймера")
                         navController.navigate(NavRoutes.CREATE_TIMER)
                 } catch (e: Exception) {
-                        Log.e(
-                                TAG,
-                                "Ошибка при навигации к экрану создания: ${e.message}"
-                        )
+                        Log.e(TAG, e.message ?: "")
                 }
         }
 
         val navigateBack: () -> Unit = {
                 try {
-                        Log.d(TAG, "Возврат на предыдущий экран")
                         if (navController.previousBackStackEntry != null) {
                                 navController.popBackStack()
                         } else {
@@ -84,16 +85,13 @@ class TimerNavigationActions(private val navController: NavHostController) {
                                 }
                         }
                 } catch (e: Exception) {
-                        Log.e(TAG, "Ошибка при возврате: ${e.message}")
+                        Log.e(TAG, e.message ?: "")
                         try {
                                 navController.navigate(NavRoutes.TIMERS_LIST) {
                                         popUpTo(0) { inclusive = true }
                                 }
                         } catch (e2: Exception) {
-                                Log.e(
-                                        TAG,
-                                        "Критическая ошибка навигации: ${e2.message}"
-                                )
+                                Log.e(TAG, e2.message ?: "")
                         }
                 }
         }

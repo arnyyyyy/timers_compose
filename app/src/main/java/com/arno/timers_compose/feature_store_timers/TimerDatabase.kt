@@ -22,7 +22,7 @@ abstract class TimerDatabase : RoomDatabase() {
                                         TimerDatabase::class.java,
                                         "timer_database"
                                 )
-                                        .fallbackToDestructiveMigration()
+                                        .fallbackToDestructiveMigration(false)
                                         .build()
                                 INSTANCE = instance
                                 instance

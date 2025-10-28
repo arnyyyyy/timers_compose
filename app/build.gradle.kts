@@ -85,6 +85,7 @@ dependencies {
         implementation(libs.androidx.compose.foundation)
         implementation(libs.androidx.room.common.jvm)
         implementation(libs.androidx.room.ktx)
+        implementation(libs.androidx.work.runtime.ktx)
         kapt(libs.androidx.room.compiler)
         implementation("com.google.code.gson:gson:2.10.1")
 

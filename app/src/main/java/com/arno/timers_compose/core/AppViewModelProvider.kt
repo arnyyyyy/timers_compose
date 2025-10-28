@@ -11,7 +11,8 @@ object AppViewModelProvider {
         val Factory = viewModelFactory {
                 initializer {
                         TimerViewModel(
-                                timerApplication().container.timerRepository
+                                timerApplication().container.timerRepository,
+                                timerApplication().applicationContext
                         )
                 }
                 initializer {

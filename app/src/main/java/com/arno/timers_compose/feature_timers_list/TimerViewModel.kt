@@ -1,8 +1,10 @@
 package com.arno.timers_compose.feature_timers_list
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.arno.timers_compose.feature_periodic_notification.WorkManagerScheduler
 import com.arno.timers_compose.feature_store_timers.TimerEntity
 import com.arno.timers_compose.feature_store_timers.TimerRepository
 import com.arno.timers_compose.utils.DayUtils
@@ -19,7 +21,10 @@ import kotlinx.coroutines.launch
 import kotlin.collections.filter
 import kotlin.collections.find
 
-class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
+class TimerViewModel(
+        val timersRepository: TimerRepository,
+        private val context: Context
+) : ViewModel() {
 
         private val _displayTimeTick = MutableStateFlow(0L)
 
@@ -74,6 +79,7 @@ class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
                 viewModelScope.launch {
                         timersRepository.updateTimer(updatedTimer)
                         startTicker()
+                        checkAndScheduleWorkManager()
                 }
         }
 
@@ -93,6 +99,7 @@ class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
                         delay(100)
                         if (timers.value.none { it.isRunning }) {
                                 stopTicker()
+                                WorkManagerScheduler.cancelPeriodic30Min(context)
                         }
                 }
         }
@@ -137,6 +144,12 @@ class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
                                 timersRepository.updateTimer(stoppedTimer)
                         }
                 }
+
+                // Проверяем, остались ли запущенные таймеры
+                val remainingRunning = currentTimers.any { it.isRunning }
+                if (!remainingRunning) {
+                        WorkManagerScheduler.cancelPeriodic30Min(context)
+                }
         }
 
         fun refreshTimers() {
@@ -173,6 +186,18 @@ class TimerViewModel(val timersRepository: TimerRepository) : ViewModel() {
 
                         if (runningTimers.isNotEmpty()) {
                                 startTicker()
+                                checkAndScheduleWorkManager()
+                        }
+                }
+        }
+
+        private fun checkAndScheduleWorkManager() {
+                viewModelScope.launch {
+                        val allTimers = timersRepository.getAllTimers().firstOrNull() ?: emptyList()
+                        val hasRunningTimer = allTimers.any { it.isRunning }
+
+                        if (hasRunningTimer) {
+                                WorkManagerScheduler.schedulePeriodic30Min(context)
                         }
                 }
         }
