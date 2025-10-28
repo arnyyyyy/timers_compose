@@ -1,8 +1,6 @@
 package com.arno.timers_compose.feature_timers_list
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,14 +8,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -28,9 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arno.timers_compose.R
 import com.arno.timers_compose.core.AppViewModelProvider
-import com.arno.timers_compose.utils.TimeFormatter.formatMillis
 import androidx.compose.runtime.collectAsState
-import com.arno.timers_compose.feature_store_timers.TimerEntity
 
 @Composable
 fun TimersListScreen(
@@ -42,7 +35,6 @@ fun TimersListScreen(
         val timers = timersState.value
 
         LaunchedEffect(Unit) {
-                Log.d("TimersListScreen", "First time on screen - calling refreshTimers")
                 viewModel.refreshTimers()
         }
 
@@ -140,73 +132,10 @@ fun TimersListScreen(
                                                                         navigateToTimerDetailScreen(
                                                                                 timer.id
                                                                         )
-                                                                })
+                                                                }
+                                                        )
                                                 }
                                         }
-                                }
-                        }
-                }
-        }
-}
-
-@Composable
-fun TimerItem(timer: TimerEntity, onClick: () -> Unit) {
-        Card(
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                        containerColor = Color.White.copy(alpha = 0.7f)
-                ),
-                elevation = CardDefaults.cardElevation(0.dp),
-                modifier = Modifier
-                        .clip(RoundedCornerShape(16.dp))
-                        .clickable { onClick() }
-                        .fillMaxWidth(),
-        ) {
-                Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                                Text(
-                                        text = timer.name,
-                                        style = MaterialTheme.typography.titleMedium.copy(
-                                                fontWeight = FontWeight.SemiBold,
-                                                color = Color(0xFF283458)
-                                        )
-                                )
-                                Text(
-                                        text = formatMillis(timer.remainingTimeMillis),
-                                        style = MaterialTheme.typography.headlineMedium.copy(
-                                                fontWeight = FontWeight.Bold,
-                                                color = if (timer.isRunning) MaterialTheme.colorScheme.primary else Color(
-                                                        0xFF4F5B77
-                                                )
-                                        )
-                                )
-                        }
-
-                        val buttonColor = if (timer.isRunning)
-                                MaterialTheme.colorScheme.tertiary.copy(alpha = 0.9f)
-                        else
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
-
-                        Card(
-                                shape = CircleShape,
-                                colors = CardDefaults.cardColors(containerColor = buttonColor)
-                        ) {
-                                Box(
-                                        modifier = Modifier
-                                                .size(48.dp)
-                                                .padding(8.dp),
-                                        contentAlignment = Alignment.Center
-                                ) {
-                                        Icon(
-                                                imageVector = if (timer.isRunning) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                                contentDescription = if (timer.isRunning) stringResource(
-                                                        R.string.pause
-                                                ) else stringResource(R.string.start),
-                                                tint = Color.White
-                                        )
                                 }
                         }
                 }
