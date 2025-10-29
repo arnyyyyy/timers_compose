@@ -35,9 +35,5 @@ object TimerResetScheduler {
                                 work
                         )
         }
-
-        fun cancelTimerReset(context: Context) {
-                WorkManager.getInstance(context).cancelUniqueWork(RESET_WORKER_NAME)
-        }
 }
 

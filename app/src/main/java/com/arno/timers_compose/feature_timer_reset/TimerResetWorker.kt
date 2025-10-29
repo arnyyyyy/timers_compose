@@ -37,7 +37,8 @@ class TimerResetWorker(
                                                 remainingTimeMillis = timer.initialDurationMillis,
                                                 isRunning = false,
                                                 isPaused = false,
-                                                lastStartedTime = 0L
+                                                lastUpdatedTime = 0L,
+                                                lastStartedTime = 0L,
                                         )
                                         timerRepository.updateTimer(resetTimer)
                                 }

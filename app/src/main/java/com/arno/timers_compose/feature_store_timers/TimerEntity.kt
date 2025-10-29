@@ -16,5 +16,6 @@ data class TimerEntity(
         val selectedDays: List<String> = emptyList(),
         val isRunning: Boolean,
         val isPaused: Boolean,
-        val lastStartedTime: Long
+        val lastUpdatedTime: Long,
+        val lastStartedTime: Long,
 )

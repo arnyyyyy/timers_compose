@@ -43,7 +43,7 @@ class TimerViewModel(
                                 .map { timer ->
                                         if (timer.isRunning) {
                                                 val elapsed =
-                                                        System.currentTimeMillis() - timer.lastStartedTime
+                                                        System.currentTimeMillis() - timer.lastUpdatedTime
                                                 val displayTime =
                                                         (timer.remainingTimeMillis - elapsed).coerceAtLeast(
                                                                 0
@@ -74,7 +74,9 @@ class TimerViewModel(
                 val updatedTimer = timer.copy(
                         isRunning = true,
                         isPaused = false,
+                        lastUpdatedTime = System.currentTimeMillis(),
                         lastStartedTime = System.currentTimeMillis()
+
                 )
                 viewModelScope.launch {
                         timersRepository.updateTimer(updatedTimer)
@@ -84,7 +86,7 @@ class TimerViewModel(
         }
 
         fun pauseTimer(timer: TimerEntity) {
-                val elapsed = System.currentTimeMillis() - timer.lastStartedTime
+                val elapsed = System.currentTimeMillis() - timer.lastUpdatedTime
                 val newRemaining = (timer.remainingTimeMillis - elapsed).coerceAtLeast(0)
 
                 val updatedTimer = timer.copy(
@@ -113,7 +115,7 @@ class TimerViewModel(
                                 val hasRunningTimers = timers.value.any { timer ->
                                         if (!timer.isRunning) return@any false
                                         val elapsed =
-                                                System.currentTimeMillis() - timer.lastStartedTime
+                                                System.currentTimeMillis() - timer.lastUpdatedTime
                                         val remaining = timer.remainingTimeMillis - elapsed
                                         remaining > 0
                                 }
@@ -132,7 +134,7 @@ class TimerViewModel(
                 val currentTimers = timersRepository.getAllTimers().firstOrNull() ?: return
 
                 currentTimers.filter { it.isRunning }.forEach { timer ->
-                        val elapsed = System.currentTimeMillis() - timer.lastStartedTime
+                        val elapsed = System.currentTimeMillis() - timer.lastUpdatedTime
                         val remaining = (timer.remainingTimeMillis - elapsed).coerceAtLeast(0)
 
                         if (remaining <= 0) {
@@ -145,7 +147,6 @@ class TimerViewModel(
                         }
                 }
 
-                // Проверяем, остались ли запущенные таймеры
                 val remainingRunning = currentTimers.any { it.isRunning }
                 if (!remainingRunning) {
                         WorkManagerScheduler.cancelPeriodic30Min(context)
@@ -171,13 +172,13 @@ class TimerViewModel(
                                         TAG,
                                         "Refreshing timer: ${timer.id} with ${timer.remainingTimeMillis} ms remaining"
                                 )
-                                val elapsed = System.currentTimeMillis() - timer.lastStartedTime
+                                val elapsed = System.currentTimeMillis() - timer.lastUpdatedTime
                                 Log.d(TAG, "Elapsed time since last start: $elapsed ms")
                                 val newRemaining =
                                         (timer.remainingTimeMillis - elapsed).coerceAtLeast(0)
                                 val updated = timer.copy(
                                         remainingTimeMillis = newRemaining,
-                                        lastStartedTime = if (newRemaining > 0) System.currentTimeMillis() else 0L,
+                                        lastUpdatedTime = if (newRemaining > 0) System.currentTimeMillis() else 0L,
                                         isRunning = newRemaining > 0,
                                         isPaused = newRemaining == 0L
                                 )

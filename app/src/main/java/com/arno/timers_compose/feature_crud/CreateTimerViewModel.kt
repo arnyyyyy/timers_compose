@@ -31,7 +31,8 @@ class CreateTimerViewModel(
                         selectedDays = timerData.selectedDays,
                         isRunning = false,
                         isPaused = true,
-                        lastStartedTime = 0L
+                        lastUpdatedTime = 0L,
+                        lastStartedTime = 0L,
                 )
                 viewModelScope.launch {
                         timersRepository.saveTimer(newTimer)
