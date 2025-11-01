@@ -4,9 +4,10 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.arno.timers_compose.feature_periodic_notification.WorkManagerScheduler
+import com.arno.timers_compose.notifications.feature_periodic_notification.WorkManagerScheduler
 import com.arno.timers_compose.feature_store_timers.TimerEntity
 import com.arno.timers_compose.feature_store_timers.TimerRepository
+import com.arno.timers_compose.notifications.feature_live_notification.TimerLiveUpdateManager
 import com.arno.timers_compose.utils.DayUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -78,6 +79,14 @@ class TimerViewModel(
                         lastStartedTime = System.currentTimeMillis()
 
                 )
+
+                val totalSeconds = timer.remainingTimeMillis / 1000
+                TimerLiveUpdateManager.startTimerLiveUpdate(
+                        timerId = timer.id,
+                        timerName = timer.name,
+                        totalSeconds = totalSeconds
+                )
+
                 viewModelScope.launch {
                         timersRepository.updateTimer(updatedTimer)
                         startTicker()
@@ -86,18 +95,26 @@ class TimerViewModel(
         }
 
         fun pauseTimer(timer: TimerEntity) {
-                val elapsed = System.currentTimeMillis() - timer.lastUpdatedTime
-                val newRemaining = (timer.remainingTimeMillis - elapsed).coerceAtLeast(0)
+                TimerLiveUpdateManager.cancelTimerLiveUpdate(timer.id)
 
-                val updatedTimer = timer.copy(
-                        isRunning = false,
-                        isPaused = true,
-                        remainingTimeMillis = newRemaining
-                )
                 viewModelScope.launch {
+                        val dbTimer = timersRepository.getTimerById(timer.id).firstOrNull()
+                        if (dbTimer == null) {
+                                return@launch
+                        }
+
+                        val now = System.currentTimeMillis()
+                        val elapsed = now - dbTimer.lastUpdatedTime
+                        val newRemaining = (dbTimer.remainingTimeMillis - elapsed).coerceAtLeast(0)
+
+                        val updatedTimer = dbTimer.copy(
+                                isRunning = false,
+                                isPaused = true,
+                                remainingTimeMillis = newRemaining,
+                                lastUpdatedTime = if (newRemaining > 0) dbTimer.lastUpdatedTime else 0L
+                        )
+
                         timersRepository.updateTimer(updatedTimer)
-                }
-                viewModelScope.launch {
                         delay(100)
                         if (timers.value.none { it.isRunning }) {
                                 stopTicker()
@@ -117,8 +134,14 @@ class TimerViewModel(
                                         val elapsed =
                                                 System.currentTimeMillis() - timer.lastUpdatedTime
                                         val remaining = timer.remainingTimeMillis - elapsed
+                                        Log.d(
+                                                TAG,
+                                                "ticker tick: id=${timer.id} elapsed=$elapsed remaining=$remaining"
+                                        )
                                         remaining > 0
                                 }
+
+                                Log.d(TAG, "ticker tick: hasRunningTimers=$hasRunningTimers")
 
                                 if (!hasRunningTimers) {
                                         stopFinishedTimers()
@@ -144,12 +167,17 @@ class TimerViewModel(
                                         remainingTimeMillis = 0
                                 )
                                 timersRepository.updateTimer(stoppedTimer)
+                                Log.d(TAG, "stopFinishedTimers: timer stopped id=${timer.id}")
                         }
                 }
 
                 val remainingRunning = currentTimers.any { it.isRunning }
                 if (!remainingRunning) {
                         WorkManagerScheduler.cancelPeriodic30Min(context)
+                        Log.d(
+                                TAG,
+                                "stopFinishedTimers: no remaining running timers, cancelled WorkManager"
+                        )
                 }
         }
 
@@ -173,7 +201,7 @@ class TimerViewModel(
                                         "Refreshing timer: ${timer.id} with ${timer.remainingTimeMillis} ms remaining"
                                 )
                                 val elapsed = System.currentTimeMillis() - timer.lastUpdatedTime
-                                Log.d(TAG, "Elapsed time since last start: $elapsed ms")
+                                Log.d(TAG, "refreshTimers: id=${timer.id} elapsed=$elapsed")
                                 val newRemaining =
                                         (timer.remainingTimeMillis - elapsed).coerceAtLeast(0)
                                 val updated = timer.copy(
@@ -209,6 +237,8 @@ class TimerViewModel(
         }
 
         fun deleteTimer(id: String) {
+                TimerLiveUpdateManager.cancelTimerLiveUpdate(id)
+
                 viewModelScope.launch {
                         timersRepository.deleteTimer(id)
                         if (timers.value.none { it.isRunning }) {

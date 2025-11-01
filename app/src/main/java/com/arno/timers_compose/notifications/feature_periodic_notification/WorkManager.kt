@@ -1,4 +1,4 @@
-package com.arno.timers_compose.feature_periodic_notification
+package com.arno.timers_compose.notifications.feature_periodic_notification
 
 import android.content.Context
 import java.util.concurrent.TimeUnit
@@ -11,6 +11,7 @@ object WorkManagerScheduler {
 
         fun schedulePeriodic30Min(context: Context) {
                 val work = PeriodicWorkRequestBuilder<NotificationWorker>(30, TimeUnit.MINUTES)
+                        .setInitialDelay(30, TimeUnit.MINUTES)
                         .build()
                 WorkManager.getInstance(context)
                         .enqueueUniquePeriodicWork(

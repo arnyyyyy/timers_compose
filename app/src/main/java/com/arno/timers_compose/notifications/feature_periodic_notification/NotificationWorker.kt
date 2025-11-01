@@ -1,4 +1,4 @@
-package com.arno.timers_compose.feature_periodic_notification
+package com.arno.timers_compose.notifications.feature_periodic_notification
 
 import android.content.Context
 import androidx.work.CoroutineWorker
@@ -27,7 +27,7 @@ class NotificationWorker(
                         applicationContext,
                         id = 1001,
                         title = "Прошло 30 минут",
-                        text = "Один или несколько таймеров все еще работают"
+                        text = "Продолжайте или сделайте перерыв",
                 )
 
                 return Result.success()

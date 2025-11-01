@@ -1,7 +1,9 @@
 package com.arno.timers_compose.feature_auth
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Build
+import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
@@ -29,6 +31,7 @@ fun AuthScreen(
         val authState by authViewModel.authState.collectAsState()
 
         var shouldRequestNotificationPermission by remember { mutableStateOf(false) }
+        var shouldShowPromotedNotificationsDialog by remember { mutableStateOf(false) }
 
         LaunchedEffect(Unit) {
                 authViewModel.initGoogleSignIn(context)
@@ -37,13 +40,16 @@ fun AuthScreen(
         val notificationPermissionLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.RequestPermission()
         ) { isGranted ->
-                onAuthSuccess()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        shouldShowPromotedNotificationsDialog = true
+                } else {
+                        onAuthSuccess()
+                }
         }
 
         LaunchedEffect(authState.user) {
                 if (authState.user != null && !shouldRequestNotificationPermission) {
                         shouldRequestNotificationPermission = true
-
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                         } else {
@@ -64,6 +70,48 @@ fun AuthScreen(
                 }
         }
 
+        if (shouldShowPromotedNotificationsDialog) {
+                AlertDialog(
+                        onDismissRequest = {
+                                shouldShowPromotedNotificationsDialog = false
+                                onAuthSuccess()
+                        },
+                        title = { Text("Enable Live Updates") },
+                        text = {
+                                Text("Enable promoted notifications to see live timer updates in your notification bar.")
+                        },
+                        confirmButton = {
+                                Button(
+                                        onClick = {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+                                                        val intent =
+                                                                Intent(Settings.ACTION_APP_NOTIFICATION_PROMOTION_SETTINGS).apply {
+                                                                        putExtra(
+                                                                                Settings.EXTRA_APP_PACKAGE,
+                                                                                context.packageName
+                                                                        )
+                                                                }
+                                                        context.startActivity(intent)
+                                                }
+                                                shouldShowPromotedNotificationsDialog = false
+                                                onAuthSuccess()
+                                        }
+                                ) {
+                                        Text("Allow")
+                                }
+                        },
+                        dismissButton = {
+                                TextButton(
+                                        onClick = {
+                                                shouldShowPromotedNotificationsDialog = false
+                                                onAuthSuccess()
+                                        }
+                                ) {
+                                        Text("Skip")
+                                }
+                        }
+                )
+        }
 
         Scaffold { paddingValues ->
                 Box(

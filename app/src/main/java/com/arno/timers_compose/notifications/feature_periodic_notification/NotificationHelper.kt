@@ -1,4 +1,4 @@
-package com.arno.timers_compose.feature_periodic_notification
+package com.arno.timers_compose.notifications.feature_periodic_notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -33,6 +33,7 @@ object NotificationHelper {
                         .setContentText(text)
                         .setSound("android.resource://${context.packageName}/${R.raw.timer_done}".toUri())
                         .setAutoCancel(true)
+                        .setOnlyAlertOnce(true)
                         .build()
                 nm.notify(id, notif)
         }

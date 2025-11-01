@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 object TimerResetScheduler {
         private const val RESET_WORKER_NAME = "timer_reset_worker"
 
-        fun scheduleTimerReset(context: Context) {
+        fun initialize(context: Context) {
                 val currentTime = Calendar.getInstance()
                 val nextMidnight = Calendar.getInstance().apply {
                         set(Calendar.HOUR_OF_DAY, 0)
