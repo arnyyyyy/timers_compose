@@ -9,6 +9,7 @@ import com.arno.timers_compose.feature_firestore_sync.FirestoreSyncManager
 import com.arno.timers_compose.feature_store_timers.TimerEntity
 import com.arno.timers_compose.feature_store_timers.TimerRepository
 import com.arno.timers_compose.notifications.feature_live_notification.TimerLiveUpdateManager
+import com.arno.timers_compose.notifications.feature_periodic_notification.NotificationHelper
 import com.arno.timers_compose.utils.DayUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -172,6 +173,14 @@ class TimerViewModel(
                                 )
                                 timersRepository.updateTimer(stoppedTimer)
                                 firestoreSyncManager.syncTimerInBackground(stoppedTimer)
+
+                                NotificationHelper.showNotification(
+                                        context = context,
+                                        id = timer.id.hashCode(),
+                                        title = "Таймер завершён! ⏰",
+                                        text = timer.name
+                                )
+
                                 Log.d(TAG, "stopFinishedTimers: timer stopped id=${timer.id}")
                         }
                 }

@@ -4,8 +4,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import androidx.core.app.NotificationCompat
-import com.arno.timers_compose.R
-import androidx.core.net.toUri
 
 object NotificationHelper {
         private const val CHANNEL_ID = "timers_channel"
@@ -31,7 +29,8 @@ object NotificationHelper {
                         .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
                         .setContentTitle(title)
                         .setContentText(text)
-                        .setSound("android.resource://${context.packageName}/${R.raw.timer_done}".toUri())
+//                        .setSound("android.resource://${context.packageName}/${R.raw.timer_done}".toUri())
+                        .setVibrate(longArrayOf(0, 500, 250, 500))
                         .setAutoCancel(true)
                         .setOnlyAlertOnce(true)
                         .build()
