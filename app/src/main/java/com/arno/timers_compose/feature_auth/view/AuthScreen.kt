@@ -1,15 +1,12 @@
-package com.arno.timers_compose.feature_auth
+package com.arno.timers_compose.feature_auth.view
 
+import android.Manifest
 import android.app.Activity
-import android.content.Intent
 import android.os.Build
-import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -21,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arno.timers_compose.R
+import com.arno.timers_compose.feature_auth.AuthViewModel
 
 @Composable
 fun AuthScreen(
@@ -51,7 +49,7 @@ fun AuthScreen(
                 if (authState.user != null && !shouldRequestNotificationPermission) {
                         shouldRequestNotificationPermission = true
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                         } else {
                                 onAuthSuccess()
                         }
@@ -71,44 +69,14 @@ fun AuthScreen(
         }
 
         if (shouldShowPromotedNotificationsDialog) {
-                AlertDialog(
+                ProgressNotificationAlertDialog(
                         onDismissRequest = {
                                 shouldShowPromotedNotificationsDialog = false
                                 onAuthSuccess()
                         },
-                        title = { Text("Enable Live Updates") },
-                        text = {
-                                Text("Enable promoted notifications to see live timer updates in your notification bar.")
-                        },
-                        confirmButton = {
-                                Button(
-                                        onClick = {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-                                                        val intent =
-                                                                Intent(Settings.ACTION_APP_NOTIFICATION_PROMOTION_SETTINGS).apply {
-                                                                        putExtra(
-                                                                                Settings.EXTRA_APP_PACKAGE,
-                                                                                context.packageName
-                                                                        )
-                                                                }
-                                                        context.startActivity(intent)
-                                                }
-                                                shouldShowPromotedNotificationsDialog = false
-                                                onAuthSuccess()
-                                        }
-                                ) {
-                                        Text("Allow")
-                                }
-                        },
-                        dismissButton = {
-                                TextButton(
-                                        onClick = {
-                                                shouldShowPromotedNotificationsDialog = false
-                                                onAuthSuccess()
-                                        }
-                                ) {
-                                        Text("Skip")
-                                }
+                        onAuthSuccess = {
+                                shouldShowPromotedNotificationsDialog = false
+                                onAuthSuccess()
                         }
                 )
         }
@@ -178,30 +146,7 @@ fun AuthScreen(
                                 }
 
                                 authState.error?.let { error ->
-                                        Card(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                colors = CardDefaults.cardColors(
-                                                        containerColor = MaterialTheme.colorScheme.errorContainer
-                                                )
-                                        ) {
-                                                Row(
-                                                        modifier = Modifier.padding(16.dp),
-                                                        horizontalArrangement = Arrangement.spacedBy(
-                                                                12.dp
-                                                        )
-                                                ) {
-                                                        Icon(
-                                                                imageVector = Icons.Default.Warning,
-                                                                contentDescription = null,
-                                                                tint = MaterialTheme.colorScheme.error
-                                                        )
-                                                        Text(
-                                                                text = error,
-                                                                color = MaterialTheme.colorScheme.onErrorContainer,
-                                                                fontSize = 14.sp
-                                                        )
-                                                }
-                                        }
+                                        AuthErrorCard(error)
                                 }
                         }
                 }
