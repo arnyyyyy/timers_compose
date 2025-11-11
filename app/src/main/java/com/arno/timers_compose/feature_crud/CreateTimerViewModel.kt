@@ -2,12 +2,14 @@ package com.arno.timers_compose.feature_crud
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.arno.timers_compose.feature_firestore_sync.FirestoreSyncManager
 import com.arno.timers_compose.feature_store_timers.TimerEntity
 import com.arno.timers_compose.feature_store_timers.TimerRepository
 import kotlinx.coroutines.launch
 
 class CreateTimerViewModel(
-        private val timersRepository: TimerRepository
+        private val timersRepository: TimerRepository,
+        private val firestoreSyncManager: FirestoreSyncManager
 ) : ViewModel() {
         fun addTimer(timerData: CreateTimerData) {
                 val name = timerData.name
@@ -36,6 +38,7 @@ class CreateTimerViewModel(
                 )
                 viewModelScope.launch {
                         timersRepository.saveTimer(newTimer)
+                        firestoreSyncManager.syncTimerInBackground(newTimer)
                 }
         }
 
@@ -65,6 +68,7 @@ class CreateTimerViewModel(
                 )
                 viewModelScope.launch {
                         timersRepository.updateTimer(updatedTimer)
+                        firestoreSyncManager.syncTimerInBackground(updatedTimer)
                 }
         }
 }

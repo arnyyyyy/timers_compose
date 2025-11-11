@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arno.timers_compose.notifications.feature_periodic_notification.WorkManagerScheduler
+import com.arno.timers_compose.feature_firestore_sync.FirestoreSyncManager
 import com.arno.timers_compose.feature_store_timers.TimerEntity
 import com.arno.timers_compose.feature_store_timers.TimerRepository
 import com.arno.timers_compose.notifications.feature_live_notification.TimerLiveUpdateManager
@@ -24,6 +25,7 @@ import kotlin.collections.find
 
 class TimerViewModel(
         val timersRepository: TimerRepository,
+        private val firestoreSyncManager: FirestoreSyncManager,
         private val context: Context
 ) : ViewModel() {
 
@@ -89,6 +91,7 @@ class TimerViewModel(
 
                 viewModelScope.launch {
                         timersRepository.updateTimer(updatedTimer)
+                        firestoreSyncManager.syncTimerInBackground(updatedTimer)
                         startTicker()
                         checkAndScheduleWorkManager()
                 }
@@ -115,6 +118,7 @@ class TimerViewModel(
                         )
 
                         timersRepository.updateTimer(updatedTimer)
+                        firestoreSyncManager.syncTimerInBackground(updatedTimer)
                         delay(100)
                         if (timers.value.none { it.isRunning }) {
                                 stopTicker()
@@ -167,6 +171,7 @@ class TimerViewModel(
                                         remainingTimeMillis = 0
                                 )
                                 timersRepository.updateTimer(stoppedTimer)
+                                firestoreSyncManager.syncTimerInBackground(stoppedTimer)
                                 Log.d(TAG, "stopFinishedTimers: timer stopped id=${timer.id}")
                         }
                 }
@@ -211,6 +216,7 @@ class TimerViewModel(
                                         isPaused = newRemaining == 0L
                                 )
                                 timersRepository.updateTimer(updated)
+                                firestoreSyncManager.syncTimerInBackground(updated)
                         }
 
                         if (runningTimers.isNotEmpty()) {
@@ -241,6 +247,7 @@ class TimerViewModel(
 
                 viewModelScope.launch {
                         timersRepository.deleteTimer(id)
+                        firestoreSyncManager.deleteTimerFromFirestore(id)
                         if (timers.value.none { it.isRunning }) {
                                 stopTicker()
                                 WorkManagerScheduler.cancelPeriodic30Min(context)

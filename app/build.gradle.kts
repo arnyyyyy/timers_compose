@@ -86,6 +86,7 @@ dependencies {
         implementation(libs.androidx.room.common.jvm)
         implementation(libs.androidx.room.ktx)
         implementation(libs.androidx.work.runtime.ktx)
+        implementation(libs.google.firebase.firestore.ktx)
         kapt(libs.androidx.room.compiler)
         implementation(libs.gson)
 

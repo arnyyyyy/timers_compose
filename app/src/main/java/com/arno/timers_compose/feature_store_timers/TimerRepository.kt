@@ -9,7 +9,7 @@ class TimerRepository(private val timerDao: TimerDao) {
         }
 
         fun getTimerById(id: String): Flow<TimerEntity?> {
-                return timerDao.getTimerById(id).map { it}
+                return timerDao.getTimerById(id).map { it }
         }
 
         suspend fun saveTimer(timer: TimerEntity) {
@@ -26,5 +26,9 @@ class TimerRepository(private val timerDao: TimerDao) {
 
         suspend fun deleteAllTimers() {
                 timerDao.deleteAllTimers()
+        }
+
+        suspend fun insertTimers(timers: List<TimerEntity>) {
+                timerDao.insertTimers(timers)
         }
 }

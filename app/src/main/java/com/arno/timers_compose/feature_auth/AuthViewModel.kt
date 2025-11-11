@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arno.timers_compose.BuildConfig.GOOGLE_WEB_CLIENT_ID
+import com.arno.timers_compose.feature_firestore_sync.FirestoreSyncManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -19,7 +20,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(
+        private val firestoreSyncManager: FirestoreSyncManager
+) : ViewModel() {
         private val auth = FirebaseAuth.getInstance()
 
         private val _authState = MutableStateFlow(
@@ -91,12 +94,22 @@ class AuthViewModel : ViewModel() {
                                 error = null
                         )
 
+                        loadTimersFromFirestore()
+
                 } catch (e: Exception) {
                         Log.e(TAG, "Firebase auth failed", e)
                         _authState.value = _authState.value.copy(
                                 isLoading = false,
                                 error = "Ошибка авторизации Firebase: ${e.message}"
                         )
+                }
+        }
+
+        private suspend fun loadTimersFromFirestore() {
+                try {
+                        firestoreSyncManager.loadTimersFromFirestore()
+                } catch (e: Exception) {
+                        Log.e(TAG, e.message.toString())
                 }
         }
 

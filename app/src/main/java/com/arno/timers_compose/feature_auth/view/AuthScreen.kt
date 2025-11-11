@@ -18,11 +18,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.arno.timers_compose.R
+import com.arno.timers_compose.core.AppViewModelProvider
 import com.arno.timers_compose.feature_auth.AuthViewModel
 
 @Composable
 fun AuthScreen(
-        authViewModel: AuthViewModel = viewModel(),
+        authViewModel: AuthViewModel = viewModel(factory = AppViewModelProvider.Factory),
         onAuthSuccess: () -> Unit
 ) {
         val context = LocalContext.current
