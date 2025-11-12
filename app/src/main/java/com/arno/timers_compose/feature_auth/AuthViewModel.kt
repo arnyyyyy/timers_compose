@@ -66,8 +66,7 @@ class AuthViewModel(
                         } catch (e: ApiException) {
                                 Log.e(
                                         TAG,
-                                        "Google sign in failed: код=${e.statusCode}, сообщение=${e.message}",
-                                        e
+                                        e.message.toString()
                                 )
                                 _authState.value = _authState.value.copy(
                                         isLoading = false,
@@ -97,7 +96,7 @@ class AuthViewModel(
                         loadTimersFromFirestore()
 
                 } catch (e: Exception) {
-                        Log.e(TAG, "Firebase auth failed", e)
+                        Log.e(TAG, e.message.toString())
                         _authState.value = _authState.value.copy(
                                 isLoading = false,
                                 error = "Ошибка авторизации Firebase: ${e.message}"

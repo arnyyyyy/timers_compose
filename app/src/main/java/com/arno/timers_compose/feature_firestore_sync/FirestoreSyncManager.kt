@@ -15,12 +15,12 @@ class FirestoreSyncManager(
         private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
         suspend fun syncTimerToFirestore(timer: TimerEntity) {
-                firestoreSyncRepository.syncTimerToFirestore(timer)
+                firestoreSyncRepository.writeTimerToFirestore(timer)
         }
 
         suspend fun loadTimersFromFirestore() {
                 try {
-                        val firestoreTimers = firestoreSyncRepository.loadTimersFromFirestore()
+                        val firestoreTimers = firestoreSyncRepository.readTimerFromFirestore()
 
                         if (firestoreTimers.isNotEmpty()) {
                                 timerRepository.insertTimers(firestoreTimers)
@@ -33,7 +33,7 @@ class FirestoreSyncManager(
         fun syncTimerInBackground(timer: TimerEntity) {
                 scope.launch {
                         try {
-                                firestoreSyncRepository.syncTimerToFirestore(timer)
+                                firestoreSyncRepository.writeTimerToFirestore(timer)
                         } catch (e: Exception) {
                                 Log.e(TAG, e.message.toString())
                         }

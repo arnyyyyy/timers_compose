@@ -16,7 +16,7 @@ class FirestoreSyncRepository {
                 firestore.collection("users").document(user.uid).collection("timers")
         }
 
-        suspend fun syncTimerToFirestore(timer: TimerEntity) {
+        suspend fun writeTimerToFirestore(timer: TimerEntity) {
                 try {
                         val collection = getUserTimersCollection() ?: return
                         val timerMap = mapOf(
@@ -38,7 +38,7 @@ class FirestoreSyncRepository {
                 }
         }
 
-        suspend fun loadTimersFromFirestore(): List<TimerEntity> {
+        suspend fun readTimerFromFirestore(): List<TimerEntity> {
                 return try {
                         val collection = getUserTimersCollection() ?: return emptyList()
                         val snapshot = collection.get().await()
@@ -46,7 +46,7 @@ class FirestoreSyncRepository {
                         snapshot.documents.mapNotNull { doc ->
                                 try {
                                         TimerEntity(
-                                                id = doc.getString("id") ?: return@mapNotNull null,
+                                                id = doc.getString("id") ?: "",
                                                 name = doc.getString("name") ?: "",
                                                 initialDurationMillis = doc.getLong("initialDurationMillis")
                                                         ?: 0L,
