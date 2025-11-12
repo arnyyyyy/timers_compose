@@ -14,7 +14,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.RestartAlt
 import androidx.compose.material3.*
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -22,6 +22,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -176,7 +177,7 @@ fun TimerDetailScreen(
                                 )
                         ) {
                                 Button(
-                                        onClick = { viewModel.pauseTimer(timer) },
+                                        onClick = { viewModel.resetTimer(timer) },
                                         modifier = Modifier.size(64.dp),
                                         shape = CircleShape,
                                         colors = ButtonDefaults.buttonColors(
@@ -186,9 +187,14 @@ fun TimerDetailScreen(
                                         contentPadding = PaddingValues(0.dp)
                                 ) {
                                         Icon(
-                                                imageVector = Icons.Default.Stop,
-                                                contentDescription = "Остановить",
-                                                modifier = Modifier.size(32.dp)
+                                                imageVector = Icons.Filled.RestartAlt,
+                                                contentDescription = "Сброс прогресса",
+                                                modifier = Modifier
+                                                        .size(32.dp)
+                                                        .graphicsLayer(
+                                                                scaleX = 1.08f,
+                                                                scaleY = 1.08f
+                                                        )
                                         )
                                 }
 

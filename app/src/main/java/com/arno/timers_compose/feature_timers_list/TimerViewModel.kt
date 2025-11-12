@@ -128,6 +128,26 @@ class TimerViewModel(
                 }
         }
 
+        fun resetTimer(timer: TimerEntity) {
+                TimerLiveUpdateManager.cancelTimerLiveUpdate(timer.id)
+
+                viewModelScope.launch {
+                        val updatedTimer = timer.copy(
+                                isRunning = false,
+                                isPaused = true,
+                                remainingTimeMillis = timer.initialDurationMillis,
+                                lastUpdatedTime = 0L
+                        )
+                        timersRepository.updateTimer(updatedTimer)
+                        firestoreSyncManager.syncTimerInBackground(updatedTimer)
+                        delay(100)
+                        if (timers.value.none { it.isRunning }) {
+                                stopTicker()
+                                WorkManagerScheduler.cancelPeriodic30Min(context)
+                        }
+                }
+        }
+
         private fun startTicker() {
                 if (tickerJob?.isActive == true) return
                 tickerJob = viewModelScope.launch(Dispatchers.Default) {
