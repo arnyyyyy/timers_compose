@@ -14,13 +14,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class AuthViewModel(
+@HiltViewModel
+class AuthViewModel @Inject constructor(
         private val firestoreSyncManager: FirestoreSyncManager
 ) : ViewModel() {
         private val auth = FirebaseAuth.getInstance()
@@ -107,12 +110,6 @@ class AuthViewModel(
                 } catch (e: Exception) {
                         Log.e(TAG, e.message.toString())
                 }
-        }
-
-        fun signOut(context: Context) {
-                auth.signOut()
-                googleSignInClient?.signOut()
-                _authState.value = AuthState(user = null)
         }
 
         companion object {

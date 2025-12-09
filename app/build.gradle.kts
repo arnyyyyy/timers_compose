@@ -5,6 +5,7 @@ plugins {
         alias(libs.plugins.android.application)
         alias(libs.plugins.kotlin.android)
         alias(libs.plugins.kotlin.compose)
+        id("com.google.dagger.hilt.android")
         id("com.google.gms.google-services")
         id("kotlin-kapt")
 }
@@ -68,6 +69,12 @@ android {
 }
 
 dependencies {
+        implementation(libs.dagger.hilt.android)
+        kapt(libs.hilt.compiler)
+
+        implementation(libs.hilt.work)
+        kapt(libs.androidx.hilt.compiler)
+
         implementation(libs.androidx.core.ktx)
         implementation(libs.androidx.lifecycle.runtime.ktx)
         implementation(libs.androidx.activity.compose)

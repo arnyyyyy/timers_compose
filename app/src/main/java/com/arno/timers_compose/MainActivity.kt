@@ -7,7 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import com.arno.timers_compose.core.TimersApp
 import com.arno.timers_compose.notifications.feature_live_notification.TimerLiveUpdateManager
 import com.arno.timers_compose.ui.theme.Timers_composeTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
         override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
