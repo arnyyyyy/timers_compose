@@ -155,15 +155,9 @@ class TimerViewModel(
                                 delay(1000L)
 
                                 val hasRunningTimers = timers.value.any { timer ->
-                                        if (!timer.isRunning) return@any false
-                                        val elapsed =
-                                                System.currentTimeMillis() - timer.lastUpdatedTime
-                                        val remaining = timer.remainingTimeMillis - elapsed
-                                        Log.d(
-                                                TAG,
-                                                "ticker tick: id=${timer.id} elapsed=$elapsed remaining=$remaining"
-                                        )
-                                        remaining > 0
+                                        val remaining = timer.remainingTimeMillis
+                                        Log.d(TAG, "ticker tick: id=${timer.id} remaining=$remaining")
+                                        timer.isRunning && remaining > 0
                                 }
 
                                 Log.d(TAG, "ticker tick: hasRunningTimers=$hasRunningTimers")
