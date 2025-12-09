@@ -189,10 +189,14 @@ class TimerViewModel(
                                 val stoppedTimer = timer.copy(
                                         isRunning = false,
                                         isPaused = true,
-                                        remainingTimeMillis = 0
+                                        remainingTimeMillis = 0,
+                                        lastUpdatedTime = 0L,
+                                        lastStartedTime = 0L
                                 )
                                 timersRepository.updateTimer(stoppedTimer)
                                 firestoreSyncManager.syncTimerInBackground(stoppedTimer)
+
+                                TimerLiveUpdateManager.cancelTimerLiveUpdate(timer.id)
 
                                 NotificationHelper.showNotification(
                                         context = context,

@@ -64,10 +64,7 @@ class AuthViewModel(
                                         )
                                 }
                         } catch (e: ApiException) {
-                                Log.e(
-                                        TAG,
-                                        e.message.toString()
-                                )
+                                Log.e(TAG, "AUTH ERROR: message=${e.message}" + e)
                                 _authState.value = _authState.value.copy(
                                         isLoading = false,
                                         error = "Ошибка входа (код ${e.statusCode}): ${e.message}"

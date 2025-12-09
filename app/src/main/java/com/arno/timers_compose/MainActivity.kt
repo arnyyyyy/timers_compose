@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.arno.timers_compose.core.TimersApp
+import com.arno.timers_compose.notifications.feature_live_notification.TimerLiveUpdateManager
 import com.arno.timers_compose.ui.theme.Timers_composeTheme
 
 class MainActivity : ComponentActivity() {
@@ -15,6 +16,13 @@ class MainActivity : ComponentActivity() {
                         Timers_composeTheme {
                                 TimersApp()
                         }
+                }
+        }
+
+        override fun onDestroy() {
+                super.onDestroy()
+                if (isFinishing) {
+                        TimerLiveUpdateManager.cancelAllTimerLiveUpdates()
                 }
         }
 }

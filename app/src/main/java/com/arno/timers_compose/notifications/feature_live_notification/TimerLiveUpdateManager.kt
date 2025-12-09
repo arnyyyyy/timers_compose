@@ -72,6 +72,14 @@ object TimerLiveUpdateManager {
                 notificationManager.cancel(timerId.hashCode())
         }
 
+        fun cancelAllTimerLiveUpdates() {
+                updateRunnables.forEach { (_, runnable) ->
+                        handler.removeCallbacks(runnable)
+                }
+                updateRunnables.clear()
+                notificationManager.cancelAll()
+        }
+
         private fun showTimerProgress(
                 timerId: String,
                 timerName: String,

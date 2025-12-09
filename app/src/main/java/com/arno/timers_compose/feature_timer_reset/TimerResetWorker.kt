@@ -18,6 +18,7 @@ class TimerResetWorker(
                 return try {
                         val app = applicationContext as TimerApplication
                         val timerRepository = app.container.timerRepository
+                        val firestoreSyncManager = app.container.firestoreSyncManager
 
                         val timers = timerRepository.getAllTimers().firstOrNull() ?: emptyList()
                         val calendar = Calendar.getInstance()
@@ -41,6 +42,11 @@ class TimerResetWorker(
                                                 lastStartedTime = 0L,
                                         )
                                         timerRepository.updateTimer(resetTimer)
+                                        try {
+                                                firestoreSyncManager.syncTimerInBackground(resetTimer)
+                                        } catch (e: Exception) {
+                                                Log.e(TAG, "Failed to sync reset timer ${timer.id}", e)
+                                        }
                                 }
                         }
 
@@ -55,4 +61,3 @@ class TimerResetWorker(
                 private const val TAG = "TimerResetWorker"
         }
 }
-
