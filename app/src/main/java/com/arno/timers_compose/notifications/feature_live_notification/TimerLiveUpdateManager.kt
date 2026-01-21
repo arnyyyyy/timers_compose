@@ -4,9 +4,11 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.graphics.Color
+import android.media.RingtoneManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.Vibrator
 import androidx.core.app.NotificationCompat
 import java.util.Locale
 import timerLiveClockView
@@ -14,8 +16,11 @@ import timerLiveClockView
 object TimerLiveUpdateManager {
         private lateinit var notificationManager: NotificationManager
         private lateinit var appContext: Context
+        private lateinit var vibrator: Vibrator
         private const val CHANNEL_ID = "timer_live_updates_channel"
         private const val CHANNEL_NAME = "Timer Live Updates"
+        private const val CHANNEL_ID_COMPLETED = "timer_completed_channel"
+        private const val CHANNEL_NAME_COMPLETED = "Timer Completed"
 
         private val handler = Handler(Looper.getMainLooper())
         private val updateRunnables = mutableMapOf<String, Runnable>()
@@ -24,14 +29,30 @@ object TimerLiveUpdateManager {
                 appContext = context.applicationContext
                 notificationManager =
                         appContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                vibrator = appContext.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
                 val channel = NotificationChannel(
                         CHANNEL_ID,
                         CHANNEL_NAME,
                         NotificationManager.IMPORTANCE_DEFAULT
                 )
-
                 notificationManager.createNotificationChannel(channel)
+
+                val completedChannel = NotificationChannel(
+                        CHANNEL_ID_COMPLETED,
+                        CHANNEL_NAME_COMPLETED,
+                        NotificationManager.IMPORTANCE_HIGH
+                ).apply {
+                        enableVibration(true)
+                        vibrationPattern = longArrayOf(0, 500, 200, 500, 200, 500)
+                        setSound(
+                                RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+                                null
+                        )
+                        enableLights(true)
+                        lightColor = Color.GREEN
+                }
+                notificationManager.createNotificationChannel(completedChannel)
         }
 
         fun startTimerLiveUpdate(timerId: String, timerName: String, totalSeconds: Long) {
@@ -122,10 +143,8 @@ object TimerLiveUpdateManager {
                 notificationManager.notify(timerId.hashCode(), builder.build())
         }
 
-
         private fun showTimerCompleted(timerId: String, timerName: String) {
-
-                val builder = NotificationCompat.Builder(appContext, CHANNEL_ID)
+                val builder = NotificationCompat.Builder(appContext, CHANNEL_ID_COMPLETED)
                         .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
                         .setContentTitle("Timer Complete!")
                         .setContentText("$timerName has finished")
@@ -133,12 +152,10 @@ object TimerLiveUpdateManager {
                         .setColor(Color.rgb(0x4C, 0xAF, 0x50))
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-
+                        .setVibrate(longArrayOf(0, 500, 200, 500, 200, 500))
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                        .setAutoCancel(true)
 
                 notificationManager.notify(timerId.hashCode(), builder.build())
-
-                handler.postDelayed({
-                        notificationManager.cancel(timerId.hashCode())
-                }, 5000)
         }
 }

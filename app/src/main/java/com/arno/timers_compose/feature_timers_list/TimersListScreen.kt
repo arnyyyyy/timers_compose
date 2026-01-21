@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,7 +41,7 @@ fun TimersListScreen(
                                 shape = CircleShape,
                                 onClick = navigateToCreateTimerScreen,
                                 containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = Color.White,
+                                contentColor = MaterialTheme.colorScheme.onPrimary,
                                 elevation = FloatingActionButtonDefaults.elevation(0.dp)
                         ) {
                                 Icon(
@@ -64,7 +63,7 @@ fun TimersListScreen(
                                         .padding(top = 16.dp, bottom = 8.dp),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 24.sp,
-                                color = Color(0xFF283458)
+                                color = MaterialTheme.colorScheme.onSurface
                         )
 
                         Box(

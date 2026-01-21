@@ -56,6 +56,9 @@ fun TimerItem(
 
         Card(
                 shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
                 elevation = CardDefaults.cardElevation(
                         defaultElevation = 2.dp
                 ),

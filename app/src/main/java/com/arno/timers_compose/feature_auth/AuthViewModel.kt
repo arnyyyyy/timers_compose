@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.arno.timers_compose.BuildConfig.GOOGLE_WEB_CLIENT_ID
+import com.arno.timers_compose.core.UserPreferencesManager
 import com.arno.timers_compose.feature_firestore_sync.FirestoreSyncManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -34,8 +35,14 @@ class AuthViewModel @Inject constructor(
         val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
         private var googleSignInClient: GoogleSignInClient? = null
+        private var userPreferencesManager: UserPreferencesManager? = null
 
         fun initGoogleSignIn(context: Context) {
+                userPreferencesManager = UserPreferencesManager(context)
+
+                val isSkipped = userPreferencesManager?.isAuthSkipped() ?: false
+                _authState.value = _authState.value.copy(isAuthSkipped = isSkipped)
+
                 val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                         .requestIdToken(GOOGLE_WEB_CLIENT_ID)
                         .requestEmail()
@@ -102,6 +109,22 @@ class AuthViewModel @Inject constructor(
                                 error = "Ошибка авторизации Firebase: ${e.message}"
                         )
                 }
+        }
+
+        fun skipAuth() {
+                userPreferencesManager?.setSkipAuth(true)
+                _authState.value = _authState.value.copy(
+                        isAuthSkipped = true,
+                        user = null,
+                        error = null
+                )
+        }
+
+        fun signOut() {
+                auth.signOut()
+                googleSignInClient?.signOut()
+                userPreferencesManager?.clearSkipAuth()
+                _authState.value = AuthState()
         }
 
         private suspend fun loadTimersFromFirestore() {

@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -85,7 +86,7 @@ private fun TimerNameCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
@@ -93,7 +94,7 @@ private fun TimerNameCard(
                         modifier = Modifier.padding(20.dp)
                 ) {
                         Text(
-                                text = "Название",
+                                text = stringResource(R.string.name),
                                 style = MaterialTheme.typography.labelLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontWeight = FontWeight.Medium
@@ -104,7 +105,7 @@ private fun TimerNameCard(
                                 value = name,
                                 onValueChange = onNameChange,
                                 modifier = Modifier.fillMaxWidth(),
-                                placeholder = { Text("Мой таймер") },
+                                placeholder = { Text(stringResource(R.string.my_timer_placeholder)) },
                                 singleLine = true,
                                 shape = RoundedCornerShape(12.dp),
                                 colors = OutlinedTextFieldDefaults.colors(
@@ -128,7 +129,7 @@ private fun TimerDurationCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
@@ -137,7 +138,7 @@ private fun TimerDurationCard(
                         horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                         Text(
-                                text = "Длительность",
+                                text = stringResource(R.string.duration),
                                 style = MaterialTheme.typography.labelLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontWeight = FontWeight.Medium
@@ -186,7 +187,7 @@ private fun TimerTypeCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
@@ -213,9 +214,9 @@ private fun TimerTypeCard(
                                                 label = {
                                                         Text(
                                                                 text = when (type) {
-                                                                        TimerType.DAILY -> "Ежедневный"
-                                                                        TimerType.WEEKLY -> "Еженедельный"
-                                                                        TimerType.UNLIMITED -> "Бесконечный"
+                                                                        TimerType.DAILY -> stringResource(R.string.daliy)
+                                                                        TimerType.WEEKLY -> stringResource(R.string.weekly)
+                                                                        TimerType.UNLIMITED -> stringResource(R.string.unlimited)
                                                                 },
                                                                 style = MaterialTheme.typography.labelSmall.copy(
                                                                         fontWeight = FontWeight.Medium
@@ -244,7 +245,7 @@ private fun TimerWeekDaysCard(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                 ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
         ) {
@@ -252,7 +253,7 @@ private fun TimerWeekDaysCard(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 14.dp)
                 ) {
                         Text(
-                                text = "Дни недели",
+                                text = stringResource(R.string.weekdays),
                                 style = MaterialTheme.typography.labelLarge.copy(
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontWeight = FontWeight.Medium

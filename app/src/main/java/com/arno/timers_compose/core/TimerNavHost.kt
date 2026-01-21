@@ -2,6 +2,7 @@ package com.arno.timers_compose.core
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -31,11 +32,17 @@ object NavRoutes {
 fun TimerNavHost(
         navController: NavHostController = rememberNavController(),
 ) {
+        val context = LocalContext.current
+        val userPreferences = remember { UserPreferencesManager(context) }
+
         val actions = remember(navController) {
                 TimerNavigationActions(navController)
         }
 
-        val startDestination = if (FirebaseAuth.getInstance().currentUser != null) {
+        val isAuthenticated = FirebaseAuth.getInstance().currentUser != null
+        val isAuthSkipped = userPreferences.isAuthSkipped()
+
+        val startDestination = if (isAuthenticated || isAuthSkipped) {
                 NavRoutes.TIMERS_LIST
         } else {
                 NavRoutes.AUTH

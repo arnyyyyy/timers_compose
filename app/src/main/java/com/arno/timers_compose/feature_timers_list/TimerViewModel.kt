@@ -190,8 +190,6 @@ class TimerViewModel(
                                 timersRepository.updateTimer(stoppedTimer)
                                 firestoreSyncManager.syncTimerInBackground(stoppedTimer)
 
-                                TimerLiveUpdateManager.cancelTimerLiveUpdate(timer.id)
-
                                 NotificationHelper.showNotification(
                                         context = context,
                                         id = timer.id.hashCode(),

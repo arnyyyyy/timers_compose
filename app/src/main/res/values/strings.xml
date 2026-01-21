@@ -10,4 +10,14 @@
     <string name="hello">Здравствуйте!</string>
     <string name="register"> Войдите, чтобы продолжить</string>
     <string name="google_sign_in">Войти через Google</string>
+    <string name="no_auth">Продолжить без авторизации</string>
+    <string name="weekdays">Дни недели</string>
+    <string name="daliy">Ежедневный</string>
+    <string name="weekly">Еженедельный</string>
+    <string name="unlimited">Бесконечный</string>
+    <string name="duration">Длительность</string>
+    <string name="my_timer_placeholder">Мой таймер</string>
+    <string name="name">Название</string>
+    <string name="timer_complete_title">Таймер завершён</string>
+    <string name="timer_complete_text">Таймер "%1$s" закончился</string>
 </resources>

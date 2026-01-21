@@ -66,8 +66,8 @@ fun AuthScreen(
                 }
         }
 
-        LaunchedEffect(authState.user) {
-                if (authState.user != null && !shouldRequestNotificationPermission) {
+        LaunchedEffect(authState.user, authState.isAuthSkipped) {
+                if ((authState.user != null || authState.isAuthSkipped) && !shouldRequestNotificationPermission) {
                         shouldRequestNotificationPermission = true
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -164,6 +164,27 @@ fun AuthScreen(
                                                         )
                                                 }
                                         }
+                                }
+
+                                Button(
+                                        onClick = {
+                                                authViewModel.skipAuth()
+                                        },
+                                        modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(56.dp),
+                                        enabled = !authState.isLoading,
+                                        colors = ButtonDefaults.buttonColors(
+                                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                        ),
+                                        shape = RoundedCornerShape(12.dp)
+                                ) {
+                                        Text(
+                                                text = stringResource(R.string.no_auth),
+                                                fontSize = 16.sp,
+                                                fontWeight = FontWeight.Medium
+                                        )
                                 }
 
                                 authState.error?.let { error ->
