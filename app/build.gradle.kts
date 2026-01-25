@@ -24,8 +24,8 @@ android {
                 applicationId = "com.arno.timers_compose"
                 minSdk = 26
                 targetSdk = 36
-                versionCode = 1
-                versionName = "1.0"
+                versionCode = 3
+                versionName = "1.1"
 
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -38,9 +38,9 @@ android {
 
         signingConfigs {
                 create("release") {
-                        storeFile = file("release-keystore.jks")
+                        storeFile = file("/Users/arno/AAATIMERS.jks")
                         storePassword = secretsProperties.getProperty("KEYSTORE_PASSWORD")
-                        keyAlias = secretsProperties.getProperty("KEY_ALIAS")
+                        keyAlias = "key0"
                         keyPassword = secretsProperties.getProperty("KEY_PASSWORD")
                 }
         }
