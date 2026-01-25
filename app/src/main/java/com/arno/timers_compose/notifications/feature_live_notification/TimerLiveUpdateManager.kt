@@ -11,8 +11,10 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.Vibrator
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.arno.timers_compose.MainActivity
+import com.arno.timers_compose.R
 import java.util.Locale
 import timerLiveClockView
 
@@ -126,12 +128,36 @@ object TimerLiveUpdateManager {
 
                 val largeIcon = timerLiveClockView(progress, timeText, accentColor)
 
+                val remoteViews = RemoteViews(appContext.packageName, R.layout.notification_timer_custom).apply {
+                        setTextViewText(R.id.timer_name, timerName)
+                        setTextViewText(R.id.timer_time, "$timeText remaining")
+                        setProgressBar(R.id.progress_bar, 100, progress, false)
+                        setTextViewText(R.id.progress_text, "$progress% complete")
+
+                        val totalPositions = 100
+                        val hedgehogPos = (progress / 100f * totalPositions).toInt().coerceIn(0, totalPositions)
+
+                        val chestnutPositions = listOf(25, 50, 75, 99)
+
+                        val row = StringBuilder()
+                        for (i in 0..totalPositions) {
+                                when {
+//                                        i == hedgehogPos -> row.append("\u202E🦔\u202C")
+                                        i == hedgehogPos -> row.append("🦔")
+                                        i in chestnutPositions && i > hedgehogPos -> row.append("🌰")
+                                        else -> row.append(" ")
+                                }
+                        }
+
+                        setTextViewText(R.id.progress_emoji_row, row.toString())
+                }
+
                 val builder = NotificationCompat.Builder(appContext, CHANNEL_ID)
                         .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-                        .setContentTitle(timerName)
-                        .setContentText("$timeText remaining")
-                        .setSubText("$progress% complete")
                         .setLargeIcon(largeIcon)
+                        .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                        .setCustomContentView(remoteViews)
+                        .setCustomBigContentView(remoteViews)
                         .setOngoing(true)
                         .setOnlyAlertOnce(true)
                         .setShowWhen(false)
@@ -140,8 +166,6 @@ object TimerLiveUpdateManager {
                         .setPriority(NotificationCompat.PRIORITY_HIGH)
                         .setCategory(NotificationCompat.CATEGORY_PROGRESS)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                        .setProgress(100, progress, false)
-                        .setStyle(NotificationCompat.DecoratedCustomViewStyle())
                         .setContentIntent(createPendingIntent())
 
                 notificationManager.notify(timerId.hashCode(), builder.build())
@@ -150,7 +174,7 @@ object TimerLiveUpdateManager {
         private fun showTimerCompleted(timerId: String, timerName: String) {
                 val builder = NotificationCompat.Builder(appContext, CHANNEL_ID_COMPLETED)
                         .setSmallIcon(android.R.drawable.ic_lock_idle_alarm)
-                        .setContentTitle("Timer Complete!")
+                        .setContentTitle("🦊Timer Complete!")
                         .setContentText("$timerName has finished")
                         .setColorized(true)
                         .setColor(Color.rgb(0x4C, 0xAF, 0x50))

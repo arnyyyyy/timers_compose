@@ -35,6 +35,7 @@ class CreateTimerViewModel(
                         isPaused = true,
                         lastUpdatedTime = 0L,
                         lastStartedTime = 0L,
+                        category = timerData.category
                 )
                 viewModelScope.launch {
                         timersRepository.saveTimer(newTimer)
@@ -64,7 +65,8 @@ class CreateTimerViewModel(
                         hours = hours,
                         minutes = minutes,
                         timerType = timerData.timerType,
-                        selectedDays = timerData.selectedDays
+                        selectedDays = timerData.selectedDays,
+                        category = timerData.category
                 )
                 viewModelScope.launch {
                         timersRepository.updateTimer(updatedTimer)

@@ -47,7 +47,8 @@ fun EditTimerScreen(
                                 hours = timer.hours,
                                 minutes = timer.minutes,
                                 timerType = timer.timerType,
-                                selectedDays = timer.selectedDays
+                                selectedDays = timer.selectedDays,
+                                category = timer.category
                         )
                 )
         }

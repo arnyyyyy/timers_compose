@@ -16,4 +16,14 @@ class Converters {
                 val listType = object : TypeToken<List<String>>() {}.type
                 return Gson().fromJson(value, listType) ?: emptyList()
         }
+
+        @TypeConverter
+        fun fromTimerCategory(value: TimerCategory): String {
+                return value.name
+        }
+
+        @TypeConverter
+        fun toTimerCategory(value: String): TimerCategory {
+                return TimerCategory.fromString(value)
+        }
 }

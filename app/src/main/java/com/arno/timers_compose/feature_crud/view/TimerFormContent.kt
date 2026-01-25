@@ -9,15 +9,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.arno.timers_compose.R
 import com.arno.timers_compose.feature_crud.CreateTimerData
 import com.arno.timers_compose.feature_crud.TimerType
+import com.arno.timers_compose.feature_store_timers.TimerCategory
+import com.arno.timers_compose.ui.theme.*
 
 @Composable
 fun TimerFormContent(
@@ -39,6 +43,11 @@ fun TimerFormContent(
                 TimerNameCard(
                         name = timerData.name,
                         onNameChange = { onTimerDataChange(currentTimerData.copy(name = it)) }
+                )
+
+                TimerCategoryCard(
+                        selectedCategory = timerData.category,
+                        onCategoryChange = { onTimerDataChange(currentTimerData.copy(category = it)) }
                 )
 
                 TimerDurationCard(
@@ -74,6 +83,80 @@ fun TimerFormContent(
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
+        }
+}
+
+@Composable
+private fun TimerCategoryCard(
+        selectedCategory: TimerCategory,
+        onCategoryChange: (TimerCategory) -> Unit
+) {
+        Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                ),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        ) {
+                Column(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 14.dp)
+                ) {
+                        Text(
+                                text = "Категория",
+                                style = MaterialTheme.typography.labelLarge.copy(
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontWeight = FontWeight.Medium
+                                ),
+                                modifier = Modifier.padding(bottom = 12.dp)
+                        )
+
+                        Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                                TimerCategory.entries.forEach { category ->
+                                        val isSelected = selectedCategory == category
+                                        val accentColor = when (category) {
+                                                TimerCategory.STUDY -> Color(0xFF5C6BC0)
+                                                TimerCategory.WORK -> Color(0xFFFF7043)
+                                                TimerCategory.REST -> Color(0xFF66BB6A)
+                                                TimerCategory.OTHER -> Color(0xFFAB47BC)
+                                        }
+
+                                        FilterChip(
+                                                selected = isSelected,
+                                                onClick = { onCategoryChange(category) },
+                                                label = {
+                                                        Row(
+                                                                verticalAlignment = Alignment.CenterVertically,
+                                                                horizontalArrangement = Arrangement.Center
+                                                        ) {
+                                                                when (category) {
+                                                                        TimerCategory.STUDY -> ForestOwl(size = 16.dp)
+                                                                        TimerCategory.WORK -> Text("🦊", fontSize = 16.sp)
+                                                                        TimerCategory.REST -> Text("🍃", fontSize = 16.sp)
+                                                                        TimerCategory.OTHER -> ForestMushroom(size = 16.dp)
+                                                                }
+                                                                Spacer(modifier = Modifier.width(4.dp))
+                                                                Text(
+                                                                        text = category.displayName,
+                                                                        style = MaterialTheme.typography.labelSmall.copy(
+                                                                                fontWeight = FontWeight.Medium
+                                                                        ),
+                                                                        maxLines = 1
+                                                                )
+                                                        }
+                                                },
+                                                modifier = Modifier.weight(1f),
+                                                colors = FilterChipDefaults.filterChipColors(
+                                                        selectedContainerColor = accentColor.copy(alpha = 0.15f),
+                                                        selectedLabelColor = accentColor
+                                                )
+                                        )
+                                }
+                        }
+                }
         }
 }
 

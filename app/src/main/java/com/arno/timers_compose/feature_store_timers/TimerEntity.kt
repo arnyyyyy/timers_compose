@@ -18,4 +18,5 @@ data class TimerEntity(
         val isPaused: Boolean,
         val lastUpdatedTime: Long,
         val lastStartedTime: Long,
+        val category: TimerCategory = TimerCategory.OTHER
 )

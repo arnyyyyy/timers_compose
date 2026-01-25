@@ -14,14 +14,22 @@ import com.arno.timers_compose.R
 import com.arno.timers_compose.core.AppViewModelProvider
 import com.arno.timers_compose.feature_crud.CreateTimerData
 import com.arno.timers_compose.feature_crud.CreateTimerViewModel
+import com.arno.timers_compose.feature_store_timers.TimerCategory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateTimerScreen(
         onNavigateBack: () -> Unit,
+        initialCategory: TimerCategory? = null,
         viewModel: CreateTimerViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-        var timerData by remember { mutableStateOf(CreateTimerData()) }
+        var timerData by remember {
+                mutableStateOf(
+                        CreateTimerData(
+                                category = initialCategory ?: TimerCategory.OTHER
+                        )
+                )
+        }
 
         Scaffold(
                 topBar = {

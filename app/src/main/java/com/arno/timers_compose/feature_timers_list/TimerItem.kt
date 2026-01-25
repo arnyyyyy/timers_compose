@@ -67,125 +67,146 @@ fun TimerItem(
                         .clip(RoundedCornerShape(20.dp))
                         .clickable { onClick() }
         ) {
-                Column(
-                        modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(20.dp)
-                ) {
+                Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
-                                text = timer.name,
-                                style = MaterialTheme.typography.titleLarge.copy(
-                                        fontWeight = FontWeight.SemiBold,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                )
+                                "🍂", fontSize = 8.sp, modifier = Modifier
+                                        .align(Alignment.TopStart)
+                                        .padding(start = 8.dp, top = 8.dp)
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                                "🍂", fontSize = 8.sp, modifier = Modifier
+                                        .align(Alignment.TopEnd)
+                                        .padding(end = 8.dp, top = 8.dp)
+                        )
+                        Text(
+                                "🌰", fontSize = 8.sp, modifier = Modifier
+                                        .align(Alignment.BottomStart)
+                                        .padding(start = 8.dp, bottom = 8.dp)
+                        )
+                        Text(
+                                "🌰", fontSize = 8.sp, modifier = Modifier
+                                        .align(Alignment.BottomEnd)
+                                        .padding(end = 8.dp, bottom = 8.dp)
+                        )
 
-                        Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                        ) {
-                                Text(
-                                        text = formatMillis(timer.remainingTimeMillis),
-                                        style = MaterialTheme.typography.displayMedium.copy(
-                                                fontWeight = FontWeight.Bold,
-                                                fontSize = 42.sp,
-                                                color = if (timer.isRunning)
-                                                        MaterialTheme.colorScheme.primary
-                                                else
-                                                        MaterialTheme.colorScheme.tertiary,
-                                                letterSpacing = (-0.5).sp
-                                        )
-                                )
-                                Box(
-                                        modifier = Modifier
-                                                .size(56.dp)
-                                                .clip(CircleShape)
-                                                .clickable { onPlayPauseClick() }
-                                                .background(
-                                                        color = if (timer.isRunning) {
-                                                                MaterialTheme.colorScheme.tertiary.copy(
-                                                                        alpha = 0.85f
-                                                                )
-                                                        } else {
-                                                                MaterialTheme.colorScheme.primary.copy(
-                                                                        alpha = 0.85f
-                                                                )
-                                                        },
-                                                        shape = CircleShape
-                                                ),
-                                        contentAlignment = Alignment.Center
-                                ) {
-                                        Icon(
-                                                imageVector = if (timer.isRunning) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                                contentDescription = if (timer.isRunning) stringResource(
-                                                        R.string.pause
-                                                ) else stringResource(R.string.start),
-                                                tint = Color.White,
-                                                modifier = Modifier.size(28.dp)
-                                        )
-                                }
-                        }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Box(
+                        Column(
                                 modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(6.dp)
-                                        .clip(RoundedCornerShape(3.dp))
-                                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                                        .padding(30.dp)
                         ) {
-                                Box(
-                                        modifier = Modifier
-                                                .fillMaxWidth(animatedProgress)
-                                                .height(6.dp)
-                                                .clip(RoundedCornerShape(3.dp))
-                                                .background(
-                                                        if (timer.isRunning)
+                                Text(
+                                        text = timer.name,
+                                        style = MaterialTheme.typography.titleLarge.copy(
+                                                fontWeight = FontWeight.SemiBold,
+                                                color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                )
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                        Text(
+                                                text = formatMillis(timer.remainingTimeMillis),
+                                                style = MaterialTheme.typography.displayMedium.copy(
+                                                        fontWeight = FontWeight.Bold,
+                                                        fontSize = 42.sp,
+                                                        color = if (timer.isRunning)
                                                                 MaterialTheme.colorScheme.primary
                                                         else
-                                                                MaterialTheme.colorScheme.primary.copy(
-                                                                        alpha = 0.5f
-                                                                )
+                                                                MaterialTheme.colorScheme.tertiary,
+                                                        letterSpacing = (-0.5).sp
                                                 )
-                                )
-                        }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                        ) {
-                                Text(
-                                        text = "${(progress * 100).toInt()}% завершено",
-                                        style = MaterialTheme.typography.bodyMedium.copy(
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                fontSize = 13.sp,
-                                                fontWeight = FontWeight.Medium
                                         )
-                                )
+                                        Box(
+                                                modifier = Modifier
+                                                        .size(56.dp)
+                                                        .clip(CircleShape)
+                                                        .clickable { onPlayPauseClick() }
+                                                        .background(
+                                                                color = if (timer.isRunning) {
+                                                                        MaterialTheme.colorScheme.tertiary.copy(
+                                                                                alpha = 0.85f
+                                                                        )
+                                                                } else {
+                                                                        MaterialTheme.colorScheme.primary.copy(
+                                                                                alpha = 0.85f
+                                                                        )
+                                                                },
+                                                                shape = CircleShape
+                                                        ),
+                                                contentAlignment = Alignment.Center
+                                        ) {
+                                                Icon(
+                                                        imageVector = if (timer.isRunning) Icons.Default.Pause else Icons.Default.PlayArrow,
+                                                        contentDescription = if (timer.isRunning) stringResource(
+                                                                R.string.pause
+                                                        ) else stringResource(R.string.start),
+                                                        tint = Color.White,
+                                                        modifier = Modifier.size(28.dp)
+                                                )
+                                        }
+                                }
 
-                                Text(
-                                        text = if (timer.isRunning && timer.lastStartedTime > 0) {
-                                                val startTime = SimpleDateFormat(
-                                                        "HH:mm",
-                                                        Locale.getDefault()
-                                                ).format(Date(timer.lastStartedTime))
-                                                "Начат в $startTime"
-                                        } else {
-                                                "Всего ${formatMillis(timer.initialDurationMillis)}"
-                                        },
-                                        style = MaterialTheme.typography.bodyMedium.copy(
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                                        alpha = 0.7f
-                                                ),
-                                                fontSize = 12.sp
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                Box(
+                                        modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(6.dp)
+                                                .clip(RoundedCornerShape(3.dp))
+                                                .background(MaterialTheme.colorScheme.surfaceVariant)
+                                ) {
+                                        Box(
+                                                modifier = Modifier
+                                                        .fillMaxWidth(animatedProgress)
+                                                        .height(6.dp)
+                                                        .clip(RoundedCornerShape(3.dp))
+                                                        .background(
+                                                                if (timer.isRunning)
+                                                                        MaterialTheme.colorScheme.primary
+                                                                else
+                                                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                                        )
                                         )
-                                )
+                                }
+
+                                Spacer(modifier = Modifier.height(12.dp))
+
+                                Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                        Text(
+                                                text = "${(progress * 100).toInt()}% завершено",
+                                                style = MaterialTheme.typography.bodyMedium.copy(
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                        fontSize = 13.sp,
+                                                        fontWeight = FontWeight.Medium
+                                                )
+                                        )
+
+                                        Text(
+                                                text = if (timer.isRunning && timer.lastStartedTime > 0) {
+                                                        val startTime = SimpleDateFormat(
+                                                                "HH:mm",
+                                                                Locale.getDefault()
+                                                        ).format(Date(timer.lastStartedTime))
+                                                        "Начат в $startTime"
+                                                } else {
+                                                        "Всего ${formatMillis(timer.initialDurationMillis)}"
+                                                },
+                                                style = MaterialTheme.typography.bodyMedium.copy(
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                                                alpha = 0.7f
+                                                        ),
+                                                        fontSize = 12.sp
+                                                )
+                                        )
+                                }
                         }
                 }
         }
