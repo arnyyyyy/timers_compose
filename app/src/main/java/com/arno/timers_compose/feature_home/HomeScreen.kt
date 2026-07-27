@@ -39,8 +39,39 @@ fun HomeScreen(
                 viewModel.refreshTimers()
         }
 
-        val totalGoalTimeToday = timers.sumOf { it.initialDurationMillis }
-        val totalSpentTimeToday = timers.sumOf { it.initialDurationMillis - it.remainingTimeMillis }
+        val currentDayOfWeek = remember {
+                java.time.LocalDate.now().dayOfWeek.getDisplayName(
+                        java.time.format.TextStyle.FULL,
+                        java.util.Locale("ru")
+                )
+        }
+
+        val todayTimers = timers.filter { timer ->
+                when (timer.timerType) {
+                        com.arno.timers_compose.feature_crud.TimerType.DAILY -> true
+                        com.arno.timers_compose.feature_crud.TimerType.WEEKLY ->
+                                timer.selectedDays.contains(currentDayOfWeek)
+                        com.arno.timers_compose.feature_crud.TimerType.UNLIMITED -> true
+                }
+        }
+
+        val totalGoalTimeToday = todayTimers.sumOf { timer ->
+                when (timer.timerType) {
+                        com.arno.timers_compose.feature_crud.TimerType.WEEKLY ->
+                                timer.initialDurationMillis / 7
+                        else -> timer.initialDurationMillis
+                }
+        }
+
+        val totalSpentTimeToday = todayTimers.sumOf { timer ->
+                val spent = timer.initialDurationMillis - timer.remainingTimeMillis
+                when (timer.timerType) {
+                        com.arno.timers_compose.feature_crud.TimerType.WEEKLY ->
+                                spent / 7
+                        else -> spent
+                }
+        }
+
         val progress = if (totalGoalTimeToday > 0) {
                 (totalSpentTimeToday.toFloat() / totalGoalTimeToday.toFloat()).coerceIn(0f, 1f)
         } else 0f

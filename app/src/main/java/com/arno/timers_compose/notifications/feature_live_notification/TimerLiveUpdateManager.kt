@@ -134,22 +134,24 @@ object TimerLiveUpdateManager {
                         setProgressBar(R.id.progress_bar, 100, progress, false)
                         setTextViewText(R.id.progress_text, "$progress% complete")
 
-                        val totalPositions = 100
-                        val hedgehogPos = (progress / 100f * totalPositions).toInt().coerceIn(0, totalPositions)
+                        val density = appContext.resources.displayMetrics.density
+                        val progressBarWidthDp = 200
+                        val progressBarWidthPx = progressBarWidthDp * density * 3 / 4
 
-                        val chestnutPositions = listOf(25, 50, 75, 99)
+                        val hedgehogPercent = progress / 85f
+                        val hedgehogTranslationX = progressBarWidthPx * hedgehogPercent
 
-                        val row = StringBuilder()
-                        for (i in 0..totalPositions) {
-                                when {
-//                                        i == hedgehogPos -> row.append("\u202E🦔\u202C")
-                                        i == hedgehogPos -> row.append("🦔")
-                                        i in chestnutPositions && i > hedgehogPos -> row.append("🌰")
-                                        else -> row.append(" ")
-                                }
-                        }
+                        setFloat(R.id.hedgehog_emoji, "setTranslationX", hedgehogTranslationX)
 
-                        setTextViewText(R.id.progress_emoji_row, row.toString())
+                        setFloat(R.id.chestnut_25, "setTranslationX", progressBarWidthPx * 0.21f)
+                        setFloat(R.id.chestnut_50, "setTranslationX", progressBarWidthPx * 0.45f)
+                        setFloat(R.id.chestnut_75, "setTranslationX", progressBarWidthPx * 0.69f)
+                        setFloat(R.id.chestnut_100, "setTranslationX", progressBarWidthPx * 0.85f)
+
+                        setViewVisibility(R.id.chestnut_25, if (progress >= 23) android.view.View.INVISIBLE else android.view.View.VISIBLE)
+                        setViewVisibility(R.id.chestnut_50, if (progress >= 47) android.view.View.INVISIBLE else android.view.View.VISIBLE)
+                        setViewVisibility(R.id.chestnut_75, if (progress >= 72) android.view.View.INVISIBLE else android.view.View.VISIBLE)
+                        setViewVisibility(R.id.chestnut_100, if (progress >= 90) android.view.View.INVISIBLE else android.view.View.VISIBLE)
                 }
 
                 val builder = NotificationCompat.Builder(appContext, CHANNEL_ID)
