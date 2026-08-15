@@ -9,7 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.arno.timers_compose.feature_auth.view.AuthScreen
+//import com.arno.timers_compose.feature_auth.view.AuthScreen
 import com.arno.timers_compose.feature_crud.view.CreateTimerScreen
 import com.arno.timers_compose.feature_crud.view.EditTimerScreen
 import com.arno.timers_compose.feature_home.HomeScreen
@@ -20,7 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import android.util.Log
 
 object NavRoutes {
-        const val AUTH = "auth"
+//        const val AUTH = "auth"
         const val HOME = "home"
         const val TIMERS_LIST = "timers_list"
         const val CATEGORY_TIMERS = "category_timers/{category}"
@@ -47,24 +47,25 @@ fun TimerNavHost(
                 TimerNavigationActions(navController)
         }
 
-        val isAuthenticated = FirebaseAuth.getInstance().currentUser != null
-        val isAuthSkipped = userPreferences.isAuthSkipped()
+//        val isAuthenticated = FirebaseAuth.getInstance().currentUser != null
+//        val isAuthSkipped = userPreferences.isAuthSkipped()
 
-        val startDestination = if (isAuthenticated || isAuthSkipped) {
+        val startDestination =
+//                if (isAuthenticated || isAuthSkipped) {
                 NavRoutes.HOME
-        } else {
-                NavRoutes.AUTH
-        }
+//        } else {
+//                NavRoutes.AUTH
+//        }
 
         NavHost(
                 navController = navController,
                 startDestination = startDestination
         ) {
-                composable(NavRoutes.AUTH) {
-                        AuthScreen(
-                                onAuthSuccess = actions.navigateToHome
-                        )
-                }
+//                composable(NavRoutes.AUTH) {
+//                        AuthScreen(
+//                                onAuthSuccess = actions.navigateToHome
+//                        )
+//                }
 
                 composable(NavRoutes.HOME) {
                         HomeScreen(
@@ -139,25 +140,25 @@ fun TimerNavHost(
 private const val TAG = "TimerNavigation"
 
 class TimerNavigationActions(private val navController: NavHostController) {
-        val navigateToHome: () -> Unit = {
-                try {
-                        navController.navigate(NavRoutes.HOME) {
-                                popUpTo(NavRoutes.AUTH) { inclusive = true }
-                        }
-                } catch (e: Exception) {
-                        Log.e(TAG, e.message ?: "")
-                }
-        }
-
-        val navigateToTimersList: () -> Unit = {
-                try {
-                        navController.navigate(NavRoutes.TIMERS_LIST) {
-                                popUpTo(NavRoutes.AUTH) { inclusive = true }
-                        }
-                } catch (e: Exception) {
-                        Log.e(TAG, e.message ?: "")
-                }
-        }
+//        val navigateToHome: () -> Unit = {
+//                try {
+//                        navController.navigate(NavRoutes.HOME) {
+//                                popUpTo(NavRoutes.AUTH) { inclusive = true }
+//                        }
+//                } catch (e: Exception) {
+//                        Log.e(TAG, e.message ?: "")
+//                }
+//        }
+//
+//        val navigateToTimersList: () -> Unit = {
+//                try {
+//                        navController.navigate(NavRoutes.TIMERS_LIST) {
+//                                popUpTo(NavRoutes.AUTH) { inclusive = true }
+//                        }
+//                } catch (e: Exception) {
+//                        Log.e(TAG, e.message ?: "")
+//                }
+//        }
 
         val navigateToCategoryTimers: (TimerCategory) -> Unit = { category ->
                 try {

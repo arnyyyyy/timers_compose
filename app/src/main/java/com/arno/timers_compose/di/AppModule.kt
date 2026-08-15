@@ -1,8 +1,8 @@
 package com.arno.timers_compose.di
 
 import android.content.Context
-import com.arno.timers_compose.feature_firestore_sync.FirestoreSyncManager
-import com.arno.timers_compose.feature_firestore_sync.FirestoreSyncRepository
+//import com.arno.timers_compose.feature_firestore_sync.FirestoreSyncManager
+//import com.arno.timers_compose.feature_firestore_sync.FirestoreSyncRepository
 import com.arno.timers_compose.feature_store_timers.TimerDao
 import com.arno.timers_compose.feature_store_timers.TimerDatabase
 import com.arno.timers_compose.feature_store_timers.TimerRepository
@@ -31,25 +31,25 @@ object AppModule {
         @Singleton
         fun provideTimerRepository(dao: TimerDao): TimerRepository = TimerRepository(dao)
 
-        @Provides
-        @Singleton
-        fun provideFirestoreSyncRepository(): FirestoreSyncRepository = FirestoreSyncRepository()
-
-        @Provides
-        @Singleton
-        fun provideFirestoreSyncManager(
-                timerRepository: TimerRepository,
-                firestoreSyncRepository: FirestoreSyncRepository
-        ): FirestoreSyncManager = FirestoreSyncManager(timerRepository, firestoreSyncRepository)
-
+//        @Provides
+//        @Singleton
+//        fun provideFirestoreSyncRepository(): FirestoreSyncRepository = FirestoreSyncRepository()
+//
+//        @Provides
+//        @Singleton
+//        fun provideFirestoreSyncManager(
+//                timerRepository: TimerRepository,
+//                firestoreSyncRepository: FirestoreSyncRepository
+//        ): FirestoreSyncManager = FirestoreSyncManager(timerRepository, firestoreSyncRepository)
+//
         @Provides
         @Singleton
         fun provideTimersContainer(
                 timerRepository: TimerRepository,
-                firestoreSyncManager: FirestoreSyncManager
+//                firestoreSyncManager: FirestoreSyncManager
         ): TimersContainer = object : TimersContainer {
                 override val timerRepository: TimerRepository = timerRepository
-                override val firestoreSyncManager: FirestoreSyncManager = firestoreSyncManager
+//                override val firestoreSyncManager: FirestoreSyncManager = firestoreSyncManager
         }
 }
 
